@@ -1,0 +1,39 @@
+/* 전역 초기화 */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #f0f4ff;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+/* 기본 텍스트 설정 */
+:root {
+  line-height: 1.5;
+  font-weight: 400;
+  color: #213547;
+  background-color: #f0f4ff;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 링크 기본 */
+a {
+  font-weight: 500;
+  color: inherit;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* 버튼 기본 */
+button {
+  font-family: inherit;
+  cursor: pointer;
+}

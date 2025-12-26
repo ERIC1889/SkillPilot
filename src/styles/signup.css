@@ -1,0 +1,197 @@
+/* =============================
+   레이아웃
+============================= */
+.signup-wrapper {
+  width: 100%;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f0f4ff; /* 연한 블루 */
+  min-height: 100vh;
+}
+
+/* =============================
+   헤더 (뒤로가기 + 로고 + 타이틀)
+============================= */
+.signup-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.signup-logo {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.signup-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-left: 8px;
+}
+
+/* 뒤로가기 버튼 */
+.back-button {
+  position: absolute;
+  left: -150px;
+
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+
+  border: 1px solid #e5e7eb;
+  background-color: white;
+  color: #6b7280;
+  font-size: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.back-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.back-button:hover {
+  background-color: #f3f4f6;
+  color: #111827;
+  border-color: #d1d5db;
+}
+
+/* =============================
+   서브 타이틀
+============================= */
+.signup-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: -20px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+/* =============================
+   카드 (폼)
+============================= */
+.signup-form {
+  width: 100%;
+  max-width: 420px;
+  background-color: #fff;
+  padding: 32px;
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* =============================
+   입력 그룹
+============================= */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 18px;
+}
+
+/* 라벨 + 아이콘 */
+.label-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.label-icon {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.signup-form label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* =============================
+   Input / Select 공통
+============================= */
+.signup-form input,
+.signup-form select {
+  padding: 14px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}
+
+.signup-form input:focus,
+.signup-form select:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* =============================
+   Select 커스텀
+============================= */
+.signup-form select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  padding-right: 44px;
+  color: #9ca3af;
+  background-color: white;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239CA3AF'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 18px;
+}
+
+.signup-form select:not([value=""]) {
+  color: #374151;
+}
+
+/* =============================
+   가입 버튼
+============================= */
+.signup-button {
+  margin-top: 28px;
+  padding: 14px;
+  border-radius: 8px;
+  border: none;
+
+  background-color: #1f2937;
+  color: white;
+
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.signup-button:hover {
+  background-color: #111827;
+}
+
+/* =============================
+   하단 안내
+============================= */
+.signup-footer {
+  margin-top: 24px;
+  font-size: 13px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.signup-footer span {
+  color: #2563eb;
+  font-weight: 500;
+  cursor: pointer;
+}
