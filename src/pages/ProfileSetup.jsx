@@ -1,15 +1,22 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FiAward, FiBook, FiBriefcase, FiShoppingBag, FiChevronLeft } from 'react-icons/fi';
+import { FiAward, FiBook, FiBriefcase, FiShoppingBag } from 'react-icons/fi';
 import '../styles/signup.css';
 
 function ProfileSetup() {
-  const navigate = useNavigate();
-  const [form, setForm] = useState({ job: '', grade: '', major: '', interest: '' });
+  const [form, setForm] = useState({
+    job: '',
+    grade: '',
+    major: '',
+    interest: ''
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value, ...(name === 'job' && { grade: '', major: '' }) }));
+    if (name === 'job') {
+      setForm(prev => ({ ...prev, [name]: value, grade: '', major: '' }));
+    } else {
+      setForm(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   return (
