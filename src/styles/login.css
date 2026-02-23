@@ -12,7 +12,8 @@
 .bg-left {
   position: absolute;
   top: 0; left: 0; width: 50%; height: 100%;
-  background: radial-gradient(1200px 600px at 20% 10%, #eaf3ff 0%, #f6fbff 40%, #f8fbff 100%);
+  /* 기존: #eaf3ff -> #dcebff (조금 더 진한 파란색으로 시작) */
+  background: radial-gradient(1200px 600px at 20% 10%, #dcebff 0%, #edf5ff 40%, #f4f9ff 100%);
   z-index: 0;
 }
 
@@ -32,13 +33,15 @@
   display: flex;
   background: #ffffff;
   border-radius: 24px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+  /* 기존 투명도 0.1 -> 0.15 로 변경하여 흰색 바탕에서도 경계가 명확해지도록 함 */
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15); 
   overflow: hidden;
 }
 
 .login-left-section {
   flex: 1;
-  background: rgba(240, 247, 255, 0.5);
+  /* 기존: rgba(240, 247, 255, 0.5) -> 농도와 불투명도를 높임 */
+  background: rgba(225, 238, 255, 0.7); 
   display: flex;
   justify-content: center;
   align-items: center;

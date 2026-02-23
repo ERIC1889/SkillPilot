@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { FiUser, FiMail, FiLock, FiChevronLeft } from 'react-icons/fi';
 import '../styles/signup.css'; 
 
-// 입력창 컴포넌트
 function InputGroup({ icon, label, name, type = 'text', placeholder, onChange }) {
   return (
     <div className="input-group">

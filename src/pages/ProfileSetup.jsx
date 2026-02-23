@@ -5,9 +5,7 @@ import { FiAward, FiBook, FiBriefcase, FiShoppingBag, FiChevronLeft } from 'reac
 import '../styles/signup.css';
 
 function ProfileSetup() {
-  // 2. 컴포넌트 최상단에서 navigate 함수 선언 (필수!)
   const navigate = useNavigate(); 
-
   const [form, setForm] = useState({
     job: '',
     grade: '',
@@ -27,7 +25,6 @@ function ProfileSetup() {
   return (
     <div className="signup-wrapper">
       <div className="profile-header-section">
-        {/* 이제 navigate(-1)이 정상 작동합니다 */}
         <button type="button" className="back-button" onClick={() => navigate(-1)}>
           <FiChevronLeft />
         </button>
@@ -35,14 +32,13 @@ function ProfileSetup() {
           <img src="/SPLogo.png" alt="Logo" className="header-logo" />
           <h1 className="header-brand">SkillPilot</h1>
         </div>
-        <h2 className="header-title">프로필 설정</h2>
+        <h2 className="header-title" style={{ width: '100%', justifyContent: 'center' }}>프로필 설정</h2>
       </div>
 
       <form 
         className="signup-form" 
         onSubmit={(e) => { 
           e.preventDefault(); 
-          // 설정 완료 시 이동할 경로
           navigate('/goalsetting'); 
         }}
       >

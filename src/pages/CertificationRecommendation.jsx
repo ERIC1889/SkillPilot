@@ -99,7 +99,7 @@ function CertificationRecommendation() {
             <button className={`card-select-btn ${selectedId === cert.id ? 'selected' : ''}`}>
               {selectedId === cert.id ? <><FiCheck /> 선택됨</> : '선택하기'}
             </button>
-          </div> /* <--- 이 닫는 태그가 누락되었었습니다! */
+          </div>
         ))}
       </div>
 
@@ -109,7 +109,7 @@ function CertificationRecommendation() {
           disabled={!selectedId} 
           onClick={() => {
             alert('자격증 선택이 완료되었습니다!');
-            navigate('/');
+            navigate('/WeeklyRoadmap');
           }}
         >
           선택 완료

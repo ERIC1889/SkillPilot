@@ -29,7 +29,7 @@ function GoalSetting() {
       <div className="profile-header-section">
         <button type="button" className="back-button" onClick={() => navigate(-1)}><FiChevronLeft /></button>
         <div className="logo-group"><img src="/SPLogo.png" alt="Logo" className="header-logo" /><h1 className="header-brand">SkillPilot</h1></div>
-        <h2 className="header-title">프로필 설정</h2>
+        <h2 className="header-title" style={{ width: '100%', justifyContent: 'center' }}>프로필 설정</h2>
       </div>
       <div className="goal-card">
         <h3 className="card-subtitle">목표 설정</h3>

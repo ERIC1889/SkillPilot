@@ -1,33 +1,41 @@
-<<<<<<< HEAD
-# React + Vite
+# 📚 [프로젝트 이름] - SkillPilot
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+간단한 설명: 사용자의 문제 풀이 결과를 바탕으로 취약점을 분석하고, AI 해설과 맞춤형 학습 로드맵을 제공하는 웹 서비스입니다.
 
-Currently, two official plugins are available:
+## ✨ 주요 기능 (Key Features)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+* **🔐 직관적인 로그인 & 인증**
+  * 깔끔하고 모던한 UI의 로그인 페이지
+  * 소셜 로그인 및 간편 가입 기능 지원
+* **📊 취약 영역 분석 대시보드**
+  * 총점 및 세부 지표 시각화
+  * 과목/영역별 강점 및 취약점을 한눈에 파악할 수 있는 동적 바 차트 (Bar Chart)
+* **📝 스마트 오답 노트 & AI 해설**
+  * 내 답안과 정답을 직관적으로 비교하는 UI
+  * 틀린 이유를 분석해 주는 **AI 맞춤 해설** 및 핵심 학습 팁(Study Tip) 제공
+* **🗺️ 맞춤형 학습 로드맵**
+  * 분석된 취약점을 보완하기 위한 다음 학습 단계 제안
 
-## React Compiler
+## 🎨 UI/UX 디자인 포인트
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* **가독성과 명암비를 고려한 디자인:** 다양한 모니터 패널(IPS, VA, TN) 및 밝기 환경에서도 UI 요소(차트 배경, 그림자 등)가 뚜렷하게 구분되도록 디테일한 색상 튜닝을 진행했습니다.
+* **깔끔한 파스텔 & 무채색 톤:** 눈의 피로를 덜어주는 연한 블루/그레이 계열(`--aa-bg-color`, `--aa-primary`)을 메인 테마로 사용하여 학습에 집중할 수 있는 환경을 구성했습니다.
+* **반응형 및 Flex/Grid 레이아웃:** `display: flex`와 `grid`를 적극 활용하여, 다양한 콘텐츠가 화면 크기에 맞게 깔끔하게 정렬되도록 구현했습니다.
 
-## Expanding the ESLint configuration
+## 🛠 기술 스택 (Tech Stack)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-=======
-# SkillPilot
+* **Frontend:** HTML5, CSS3, React
+* **Styling:** CSS Variables (CSS 변수를 활용한 일관된 디자인 시스템 구축)
+* **기타:** [사용한 라이브러리나 툴이 있다면 작성]
 
-React + Vite 기반으로 개발 중인 프로젝트입니다.
+## 🚀 설치 및 실행 방법 (Getting Started)
 
-## Tech Stack
-- React
-- Vite
-- JavaScript (ES6+)
-- CSS
-
-## Getting Started
-```bash
-npm install
-npm run dev
->>>>>>> 16f276d378b196c3c054e1830b29a4314b69f230
+1. 저장소를 클론합니다.
+   ```bash
+   git clone [https://github.com/사용자이름/저장소이름.git]
+2. 프로젝트 폴더로 이동합니다.
+  cd 저장소이름
+3. [패키지를 설치합니다 - React/Vue 등 사용 시]
+  npm install
+4. [프로젝트를 실행합니다]
+  npm run dev

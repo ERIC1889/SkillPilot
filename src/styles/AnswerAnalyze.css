@@ -1,0 +1,191 @@
+/* AnswerAnalyze.css */
+:root {
+  --aa-bg-color: #F8FAFC;
+  --aa-primary: #1E293B;
+  --aa-secondary: #64748B;
+  --aa-border: #E2E8F0;
+  --aa-red-bg: #FEF2F2;
+  --aa-red-text: #DC2626;
+  --aa-green-bg: #ECFDF5;
+  --aa-green-text: #059669;
+  --aa-blue-bg: #EFF6FF;
+  --aa-blue-text: #1D4ED8;
+}
+
+.analyze-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--aa-bg-color);
+  font-family: 'Pretendard', -apple-system, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 60px;
+}
+
+/* 헤더 */
+.analyze-header {
+  width: 100%;
+  background-color: white;
+  border-bottom: 1px solid var(--aa-border);
+  padding: 20px 0;
+  margin-bottom: 40px;
+}
+.header-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.header-logo-area { display: flex; flex-direction: column; }
+.header-title { font-size: 20px; font-weight: 800; color: var(--aa-primary); margin: 0; display: flex; align-items: center; gap: 8px;}
+.header-sub { font-size: 13px; color: var(--aa-secondary); margin-top: 4px; }
+
+/* 메인 콘텐츠 랩퍼 */
+.analyze-content {
+  width: 100%;
+  max-width: 900px;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 공통 카드 스타일 */
+.analyze-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid var(--aa-border);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+}
+
+/* 1. 총점 섹션 */
+.score-section { text-align: center; }
+.score-title-row {
+  display: flex; justify-content: center; align-items: center; gap: 8px;
+  font-size: 18px; font-weight: 700; color: #334155; margin-bottom: 16px;
+}
+.total-score {
+  font-size: 24px; font-weight: 600; color: #94a3b8; margin-bottom: 24px;
+}
+.total-score span {
+  font-size: 64px; font-weight: 800; color: var(--aa-primary); margin-right: 4px;
+}
+.score-details {
+  display: flex; justify-content: center; gap: 60px;
+  border-top: 1px solid #F1F5F9;
+  padding-top: 24px;
+}
+.detail-item { display: flex; flex-direction: column; gap: 4px; }
+.detail-label { font-size: 13px; color: var(--aa-secondary); }
+.detail-value { font-size: 20px; font-weight: 700; color: var(--aa-primary); }
+.detail-value.red { color: var(--aa-red-text); }
+
+/* 2. 취약 영역 분석 (차트) */
+.section-title {
+  font-size: 18px; font-weight: 700; color: var(--aa-primary);
+  margin-bottom: 24px; display: flex; align-items: center; gap: 8px;
+}
+.chart-wrapper {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  height: 200px; padding: 0 40px 30px;
+  background: linear-gradient(to top, transparent 19px, #E2E8F0 20px) 0 0 / 100% 20% repeat-y;
+  position: relative;
+}
+.bar-container {
+  display: flex; flex-direction: column; align-items: center; gap: 10px; width: 60px;
+  position: relative; z-index: 2;
+  height: 100%;
+  justify-content: flex-end;
+}
+.bar {
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  transition: height 0.8s ease-out;
+  position: relative;
+}
+/* 점수 툴팁 (호버 시) */
+.bar:hover::after {
+  content: attr(data-score);
+  position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
+  background: #334155; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; white-space: nowrap;
+}
+/* 막대 색상 */
+.bar.weak { background-color: #BFDBFE; }
+.bar.normal { background-color: #60A5FA; }
+.bar.good { background-color: #2563EB; }
+.bar-label { font-size: 12px; color: var(--aa-secondary); font-weight: 500;white-space: nowrap;width: 100%;text-align: center;letter-spacing: -0.5px; }
+
+.chart-legend {
+  display: flex; justify-content: center; gap: 20px; margin-top: 20px;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--aa-secondary); font-weight: 600;}
+.dot { width: 12px; height: 12px; border-radius: 2px; }
+.dot.weak { background-color: #BFDBFE; }
+.dot.normal { background-color: #60A5FA; }
+.dot.good { background-color: #2563EB; }
+/* 3. 오답 문제 분석 */
+.mistake-card { padding: 0; overflow: hidden; margin-bottom: 20px; }
+.mistake-header {
+  padding: 20px 30px; border-bottom: 1px solid #F1F5F9;
+  display: flex; align-items: center; gap: 10px;
+}
+.badge-num {
+  background-color: var(--aa-red-bg); color: var(--aa-red-text);
+  font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 4px;
+}
+.badge-subject {
+  background-color: #E2E8F0; color: #475569;
+  font-size: 13px; font-weight: 600; padding: 4px 10px; border-radius: 4px;
+}
+
+.mistake-body { padding: 30px; }
+.question-text { font-size: 18px; font-weight: 600; color: #334155; margin-bottom: 24px; line-height: 1.5; }
+
+/* 답안 비교 박스 */
+.compare-box {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px;
+}
+.answer-block { padding: 16px; border-radius: 8px; }
+.answer-block.my {
+  background-color: var(--aa-red-bg); border: 1px solid #FECACA;
+}
+.answer-block.correct {
+  background-color: var(--aa-green-bg); border: 1px solid #A7F3D0;
+}
+.ans-label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+.answer-block.my .ans-label { color: var(--aa-red-text); }
+.answer-block.correct .ans-label { color: var(--aa-green-text); }
+.ans-value { font-size: 15px; font-weight: 600; }
+.answer-block.my .ans-value { color: #991B1B; }
+.answer-block.correct .ans-value { color: #065F46; }
+
+/* AI 해설 및 팁 */
+.ai-explanation {
+  background-color: #F8FAFC; padding: 20px; border-radius: 8px; margin-bottom: 12px;
+}
+.exp-header { display: flex; align-items: center; gap: 6px; font-weight: 700; color: #334155; margin-bottom: 8px; font-size: 14px; }
+.exp-content { font-size: 14px; color: #475569; line-height: 1.6; }
+
+.study-tip {
+  background-color: #DBEAFE; padding: 16px 20px; border-radius: 8px;
+}
+.tip-header { display: block; font-size: 13px; font-weight: 700; color: #1E40AF; margin-bottom: 4px; }
+.tip-content { font-size: 14px; color: #1E3A8A; }
+
+/* 하단 버튼 */
+.footer-action {
+  margin-top: 40px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.btn-roadmap {
+  background-color: #1E293B; color: white;
+  padding: 16px 60px; font-size: 18px; font-weight: 700;
+  border: none; border-radius: 8px; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2);
+  transition: transform 0.2s;
+}
+.btn-roadmap:hover { transform: translateY(-2px); }
+.footer-text { font-size: 13px; color: #94A3B8; }
