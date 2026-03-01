@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/dashboard.css';
 import CBT from './CBT';
-
+import { useNavigate } from "react-router-dom";
 // --- 아이콘 컴포넌트 ---
 const DiplomaIcon = () => (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2d3e5d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>);
 const TargetIcon = () => (<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2d3e5d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>);
@@ -21,6 +21,7 @@ const TrophyIcon = () => (<svg width="24" height="24" viewBox="0 0 24 24" fill="
 const LogOutIcon = () => (<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>);
 
 function Dashboard() {
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isCertModalOpen, setIsCertModalOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState('dashboard'); 
@@ -214,7 +215,10 @@ function Dashboard() {
           <div className="tab-dashboard">
             <section className="dashboard-card welcome-card">
               <div className="welcome-text"><h2>안녕하세요, {userInfo.name}님! 👋</h2><p>오늘도 목표를 향해 한 걸음 나아가볼까요?</p></div>
-              <button className="dark-btn">내 포트폴리오로 이동</button>
+             <button className="dark-btn"
+              onClick={() => navigate("/Portfolio")}>
+                내 포트폴리오로 이동
+             </button>
             </section>
             
             <section className="dashboard-card cert-card">

@@ -1,0 +1,105 @@
+.preview-page {
+  min-height: 100vh;
+  background: #eef3f9;
+  padding: 40px 20px;
+}
+
+.preview-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.preview-header h2 {
+  margin: 0;
+  font-size: 35px;
+}
+
+.preview-card {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.preview-card h1 {
+  margin: 0;
+  font-size: 34px;
+}
+
+.preview-card h4 {
+  margin-top: 5px;
+  color: #666;
+  font-weight: 500;
+}
+
+.preview-card section {
+  margin-top: 30px;
+}
+
+.preview-card h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  border-bottom: 2px solid #dbe6f3;
+  padding-bottom: 6px;
+}
+
+.chip-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  background: #cfe1f6;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.preview-project {
+  background: #f4f7fb;
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.preview-project strong {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.preview-footer {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.preview-footer button {
+  padding: 12px 25px;
+  border-radius: 12px;
+  border: none;
+  background: #2f3e57;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.preview-logo {
+  height: 70px;      /* ← 키워줌 */
+  width: auto;
+  object-fit: contain;
+  margin-right: -24px;  /* ← PNG 내부 여백 제거 */
+}

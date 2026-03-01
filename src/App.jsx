@@ -7,6 +7,8 @@ import GoalSetting from './pages/GoalSetting';
 import CertificationRecommendation from './pages/CertificationRecommendation';
 import Dashboard from './pages/Dashboard';
 import WeeklyRoadmap from './pages/WeeklyRoadmap';
+import Portfolio from "./pages/Portfolio";
+import PortfolioPreview from "./pages/PortfolioPreview";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
         <Route path="/CertificationRecommendation" element={<CertificationRecommendation />} />
         <Route path="/WeeklyRoadmap" element={<WeeklyRoadmap />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/portfolio" element={<Portfolio />} />
+        <Route path="/portfolio/preview" element={<PortfolioPreview />} />
       </Routes>
     </BrowserRouter>
   );
