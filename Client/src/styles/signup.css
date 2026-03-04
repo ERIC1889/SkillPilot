@@ -1,0 +1,626 @@
+/* 전체 배경 및 레이아웃 */
+.signup-wrapper {
+  width: 100%;
+  padding: 40px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f0f4ff;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* 헤더 섹션 (뒤로가기 버튼 포함) */
+.profile-header-section, .signup-header {
+  position: relative;
+  width: 100%;
+  max-width: 550px;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.logo-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.header-logo, .signup-logo { width: 60px; height: auto; }
+.header-brand { font-size: 32px; font-weight: 800; color: #1e293b; margin: 0; }
+.signup-title { font-size: 22px; font-weight: 800; color: #1e293b; margin: 0; }
+.header-title { font-size: 22px; font-weight: 800; color: #334155; margin: 0; }
+.header-desc {font-size: 16px; margin-top: 5px;}
+/* 뒤로가기 버튼 */
+.back-button {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid #cbd5e1;
+  background-color: white;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* 카드 디자인 */
+.signup-form, .goal-card {
+  width: 100%;
+  max-width: 550px;
+  background-color: #fff;
+  padding: 30px 40px 40px 40px;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.card-subtitle { font-size: 18px; font-weight: 700; margin: 0 0 20px; color: #1e293b; }
+
+/* 입력 그룹 */
+.input-group, .goal-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.label-with-icon { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.label-icon { font-size: 16px; color: #64748b; }
+.input-group label, .goal-label { font-size: 14px; font-weight: 700; color: #475569; }
+
+/* 입력창 및 셀렉트 */
+.signup-form input, .signup-form select, .goal-input {
+  width: 100% !important;
+  padding: 12px 16px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 14px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+/* 희망직무 그리드 */
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+
+.role-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 5px;
+  min-height: 70px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 12px;
+  cursor: pointer;
+  background-color: #fff;
+  transition: all 0.2s;
+}
+
+.role-item.active { background-color: #dbeafe !important; border-color: #3b82f6 !important; }
+.role-icon { font-size: 20px; color: #64748b; margin-bottom: 4px; }
+.role-item.active .role-icon, .role-item.active .role-name { color: #1e40af; }
+.role-name { font-size: 11px; font-weight: 500; text-align: center; }
+
+/* 슬라이더 및 버튼 */
+.period-slider { width: 100%; accent-color: #2d3e5d; margin: 10px 0; cursor: pointer; }
+.period-value { text-align: center; font-size: 14px; font-weight: 700; color: #1e293b; }
+.signup-button, .complete-button {
+  width: 100%;
+  padding: 16px;
+  background-color: #2d3e5d;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 20px;
+  cursor: pointer;
+}
+/* 추천 페이지 배경색 */
+.recommendation-page {
+  background-color: #f0f2f5 !important;
+}
+
+/* 카드 호버 효과 */
+.cert-card:hover {
+  transform: translateY(-3px);
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 15px rgba(0,0,0,0.1) !important;
+}
+
+/* 선택된 카드 강조 */
+.cert-card.selected {
+  background-color: #f8faff !important;
+}
+
+/* 페이지 전체 배경 */
+.recommendation-page {
+  min-height: 100vh;
+  background-color: #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  font-family: 'Inter', sans-serif;
+}
+
+/* 헤더 부분 */
+.recommend-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.recommend-logo {
+  width: 45px;
+  height: 45px;
+}
+.recommend-title {
+  font-size: 28px;
+  color: #1e293b;
+  margin: 0;
+  font-weight: 800;
+}
+.recommend-subtitle {
+  color: #64748b;
+  font-size: 16px;
+}
+
+/* 카드 리스트 */
+.recommend-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 20px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.recommend-card {
+  width: 100%;
+  padding: 32px 48px;
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.recommend-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+.recommend-card.active {
+  border: 2px solid #3b82f6;
+  background-color: #f8faff;
+}
+
+/* 카드 내부 세부 디자인 */
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.card-icon {
+  font-size: 24px;
+}
+.card-title {
+  margin: 0;
+  font-size: 18px;
+  color: #334155;
+}
+.card-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 0 4px;
+}
+.info-label {
+  display: block;
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+.info-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+
+/* 카드 내부 버튼 */
+.card-select-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #f1f5f9;
+  color: #64748b;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.card-select-btn.selected {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* 하단 최종 완료 버튼 */
+.recommend-footer {
+  margin-top: 20px;
+}
+.final-submit-btn {
+  padding: 14px 60px;
+  border-radius: 12px;
+  border: none;
+  background-color: #94a3b8; /* 비활성 상태 회색 */
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: not-allowed;
+}
+.final-submit-btn:not(:disabled) {
+  background-color: #64748b; /* 선택 시 진한 회색 */
+  cursor: pointer;
+}
+
+/* 전체 페이지 배경 (사진 속 연한 블루그레이) */
+.recommendation-page {
+  min-height: 100vh;
+  background-color: #f1f4f9; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  position: relative; /* 뒤로가기 버튼 배치용 */
+}
+
+/* 뒤로가기 버튼 (왼쪽 상단 고정) */
+.abs-back-button {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #475569;
+  cursor: pointer;
+}
+
+.recommendation-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 60px 20px;
+  background-color: #f1f4f9 !important; /* 사진 속 연한 블루그레이 */
+  font-family: 'Inter', sans-serif;
+  position: relative;
+}
+
+/* 2. 헤더 섹션 (로고 및 타이틀) */
+.recommend-header {
+  width: 100%;
+  max-width: 550px;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.recommend-logo { width: 45px; height: auto; }
+
+.recommend-title { 
+  font-size: 28px; 
+  font-weight: 800; 
+  color: #1e293b; /* 진한 네이비 */
+  margin: 0; 
+}
+
+.recommend-subtitle { 
+  color: #64748b; 
+  font-size: 15px; 
+  margin-top: 8px; 
+}
+
+/* 3. 뒤로가기 버튼 (상단 고정형) */
+.abs-back-button {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  border: none;
+  background: none;
+  font-size: 28px;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 4. 자격증 카드 리스트 및 개별 카드 */
+.recommend-list {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  width: 100%;
+  gap: 20px;
+  max-width: 500px;   /* 전체적인 가로 폭 확장 (기존보다 넓게 설정) */
+  margin: 0 auto;
+}
+
+.recommend-card {
+  position: relative;
+  background: #ffffff;
+  border: 2px solid #eee;
+  border-radius: 20px;
+  padding: 24px 30px; /* 좌우를 넓게 설정 */
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* 확장 시 내용이 깔끔하게 보이도록 */
+  width: 100%;
+  max-width: 650px; /* 카드 좌우 폭 확장 */
+  margin: 0 auto;
+}
+
+.recommend-card:hover { 
+  transform: translateY(-2px); 
+  box-shadow: 0 8px 15px rgba(0,0,0,0.08); 
+}
+
+.recommend-card.active { 
+  border: 2px solid #3b82f6; 
+  background-color: #f8faff; 
+}
+
+/* 상세 정보 레이어 초기 상태 (숨김) */
+.details-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(43, 58, 85, 0.96); /* 메인 컬러에 투명도 부여 */
+  color: white;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0;             /* 초기에는 투명하게 */
+  visibility: hidden;     /* 클릭 방지 */
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+/* 확장될 상세 정보 영역 초기 상태 */
+.details-expanded {
+  max-height: 0;      /* 높이를 0으로 숨김 */
+  opacity: 0;         /* 투명하게 */
+  transition: all 0.4s ease-in-out;
+  pointer-events: none;
+}
+
+/* 카드 호버 시 애니메이션 */
+.recommend-card:hover {
+  border-color: #2B3A55;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.recommend-card:hover .details-expanded {
+  max-height: 400px;  /* 내용에 맞게 충분한 높이 부여 */
+  opacity: 1;
+  margin-top: 20px;   /* 확장 시 간격 추가 */
+  pointer-events: auto;
+}
+
+/* 구분선 및 텍스트 스타일 */
+.expanded-divider {
+  height: 1px;
+  background: #f0f0f0;
+  margin-bottom: 20px;
+}
+
+.overlay-content p {
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start; /* 텍스트가 길어져도 아이콘은 상단 고정 */
+  gap: 12px;
+  color: #444;
+  line-height: 1.5;
+}
+
+.overlay-content svg {
+  color: #2B3A55;
+  margin-top: 4px; /* 텍스트 첫 줄과 아이콘 높이 맞춤 */
+  min-width: 18px;
+}
+
+/* 5. 카드 내부 요소 (아이콘, 정보, 버튼) */
+.card-top { 
+  display: flex; 
+  align-items: center; 
+  gap: 12px; 
+  margin-bottom: 20px; 
+}
+
+.card-title { 
+  font-size: 1.1rem; 
+  color: #1e293b; 
+  margin: 0; 
+}
+
+.card-info { 
+  display: flex; 
+  justify-content: space-between; 
+  margin-bottom: 20px; 
+}
+
+.info-label { 
+  display: block; 
+  font-size: 13px; 
+  color: #94a3b8; 
+  margin-bottom: 4px; 
+}
+
+.info-value { 
+  font-size: 18px; 
+  font-weight: 700; 
+  color: #1e293b; 
+}
+
+.card-select-btn {
+  width: 100%; 
+  padding: 10px; 
+  border: none; 
+  border-radius: 8px;
+  background-color: #f1f5f9; 
+  color: #64748b; 
+  font-weight: 600;
+  transition: all 0.2s;
+  margin-top: 20px;
+}
+
+.card-select-btn.selected { 
+  background-color: #3b82f6; 
+  color: white; 
+}
+
+/* 6. 하단 최종 제출 버튼 */
+.recommend-footer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.final-submit-btn {
+  width: 180px;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  background-color: #94a3b8; /* 비활성 상태 회색 */
+  color: white;
+  transition: all 0.2s;
+}
+
+.final-submit-btn:not(:disabled) { 
+  background-color: #475569; /* 활성 상태 진한 회색 */
+}
+
+.final-submit-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* [초광폭 모니터 - 1600px 이상] */
+@media (min-width: 1600px) {
+  .recommend-list {
+    max-width: 1200px; /* 카드를 더 시원하게 키움 */
+    gap: 32px;         /* 카드 사이 간격 확장 */
+  }
+
+  .card-title {
+    font-size: 1.5rem; /* 제목 크기 확대 */
+  }
+
+  .info-value {
+    font-size: 22px;   /* 수치 데이터 가독성 강화 */
+  }
+}
+/* [태블릿 및 작은 모니터 - 1024px 이하] */
+@media (max-width: 1024px) {
+  .recommend-list {
+    max-width: 90%; /* 화면 양옆에 여백 확보 */
+  }
+}
+
+/* [모바일 가로 및 큰 스마트폰 - 768px 이하] */
+@media (max-width: 768px) {
+  .signup-wrapper {
+    padding: 20px 12px;
+  }
+
+  /* 회원가입 폼 내부 패딩 조정 */
+  .signup-form, .goal-card {
+    padding: 25px 20px;
+  }
+
+  /* 추천 카드 양옆 패딩 축소 및 폰트 조절 */
+  .recommend-card {
+    padding: 20px;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+  }
+
+  .info-value {
+    font-size: 15px;
+  }
+
+  /* 뒤로가기 버튼 위치 조정 */
+  .abs-back-button {
+    top: 20px;
+    left: 15px;
+    font-size: 24px;
+  }
+}
+
+/* [작은 모바일 기기 - 480px 이하] */
+@media (max-width: 480px) {
+  /* 희망직무 그리드를 3열에서 2열로 변경 */
+  .role-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* 카드 정보(난이도, 기간)를 세로로 배치 */
+  .card-info {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+    padding: 15px;
+  }
+
+  .header-brand {
+    font-size: 26px;
+  }
+
+  .final-submit-btn {
+    width: 100%; /* 모바일에서는 버튼을 꽉 차게 */
+    padding: 14px;
+  }
+}
