@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import api from '../services/api';
 import '../styles/AnswerAnalyze.css';
 
 const Icons = {
@@ -14,35 +15,81 @@ const Icons = {
   Bulb: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.9.93-1.54 1.86-1.78A6 6 0 0 0 12 2a6 6 0 0 0-5 10c0 .66.26 1.25.68 1.7L9 15v3h6v-3l1.09-1z"/></svg>
 };
 
-const AnswerAnalyze = ({ onExit }) => {
-  const chartData = [
-    { subject: '자료구조', score: 40, type: 'weak' },
-    { subject: '알고리즘', score: 75, type: 'normal' },
-    { subject: '데이터베이스', score: 60, type: 'normal' },
-    { subject: '운영체제', score: 85, type: 'good' },
-    { subject: '네트워크', score: 50, type: 'weak' },
-  ];
+const AnswerAnalyze = ({ testId, onExit }) => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [result, setResult] = useState(null);
+  const [chartData, setChartData] = useState([]);
+  const [mistakes, setMistakes] = useState([]);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [wrongCount, setWrongCount] = useState(0);
 
-  const mistakes = [
-    {
-      id: 1,
-      subject: '자료구조',
-      question: '다음 중 스택(Stack) 자료구조의 특징으로 옳지 않은 것은?',
-      myAnswer: '데이터의 중간 삽입이 자유롭다',
-      correctAnswer: 'push와 pop 연산을 사용한다',
-      explanation: '스택은 LIFO(후입선출) 구조로, 데이터의 삽입과 삭제가 한쪽 끝에서만 일어납니다. 중간에 데이터를 삽입하거나 삭제할 수 없는 것이 스택의 핵심 특징입니다.',
-      tip: '스택의 제한적 접근 특성을 활용한 실제 사례(브라우저 뒤로가기, 실행 취소 기능)를 학습하면 개념 이해에 도움이 됩니다.'
-    },
-    {
-      id: 3,
-      subject: '데이터베이스',
-      question: '다음 중 데이터베이스의 정규화(Normalization)에 대한 설명으로 옳은 것은?',
-      myAnswer: '데이터의 중복을 최대화한다',
-      correctAnswer: '이상 현상을 제거하기 위한 과정이다',
-      explanation: '정규화는 데이터베이스 설계 과정에서 중복을 최소화하고 데이터 무결성을 향상시키는 프로세스입니다. 삽입, 삭제, 갱신 이상을 방지합니다.',
-      tip: '정규화의 각 단계(1NF, 2NF, 3NF)별 조건과 실제 테이블 예제를 비교하며 학습하면 효과적입니다.'
-    }
-  ];
+  useEffect(() => {
+    const fetchResults = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await api.get('/cbt/results/' + testId);
+        const { result: resultData, wrongNotes } = res.data.data;
+
+        setResult(resultData);
+
+        // 과목별 점수 차트 데이터
+        const chart = (resultData.subjectScores || []).map(s => ({
+          subject: s.subject,
+          score: s.score,
+          type: s.score >= 80 ? 'good' : s.score >= 60 ? 'normal' : 'weak'
+        }));
+        setChartData(chart);
+
+        // 오답 목록
+        const mistakeList = (wrongNotes || []).map(n => ({
+          id: n._id,
+          subject: n.subject,
+          question: n.question,
+          myAnswer: n.myAnswer,
+          correctAnswer: n.correctAnswer,
+          explanation: n.explanation || 'AI 분석 중...',
+          tip: n.tip || ''
+        }));
+        setMistakes(mistakeList);
+
+        // 정답/오답 수 계산
+        const questions = resultData.questions || [];
+        const correct = questions.filter(q => q.isCorrect).length;
+        const wrong = questions.filter(q => !q.isCorrect).length;
+        setCorrectCount(correct);
+        setWrongCount(wrong);
+      } catch (err) {
+        console.error('Failed to fetch results:', err);
+        setError('결과를 불러오는 중 오류가 발생했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchResults();
+  }, [testId]);
+
+  if (loading) {
+    return (
+      <div className="analyze-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontSize: '18px', color: '#64748b' }}>AI가 오답을 분석하고 있습니다...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="analyze-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontSize: '18px', color: '#ef4444', marginBottom: '16px' }}>{error}</p>
+          <button className="btn-roadmap" onClick={onExit}>돌아가기</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="analyze-container">
@@ -50,11 +97,11 @@ const AnswerAnalyze = ({ onExit }) => {
       <header className="analyze-header">
         <div className="header-inner">
           <div className="logo-area">
-            <img 
-                src="/SPLogo.png" 
-                alt="logo" 
-                style={{ width: '32px', height: 'auto', marginRight: '8px' }} 
-                onError={(e) => e.target.style.display='none'} 
+            <img
+                src="/SPLogo.png"
+                alt="logo"
+                style={{ width: '32px', height: 'auto', marginRight: '8px' }}
+                onError={(e) => e.target.style.display='none'}
             />
             </div>
           <div className="header-logo-area">
@@ -65,28 +112,28 @@ const AnswerAnalyze = ({ onExit }) => {
       </header>
 
       <div className="analyze-content">
-        
+
         {/* 2. 총점 카드 */}
         <section className="analyze-card score-section">
           <div className="score-title-row">
             <Icons.CheckCircle /> 총점
           </div>
           <div className="total-score">
-             <span>92</span> / 100
+             <span>{result.totalScore}</span> / 100
           </div>
-          
+
           <div className="score-details">
             <div className="detail-item">
                <span className="detail-label">정답</span>
-               <span className="detail-value">28문항</span>
+               <span className="detail-value">{correctCount}문항</span>
             </div>
             <div className="detail-item">
                <span className="detail-label">오답</span>
-               <span className="detail-value red">2문항</span>
+               <span className="detail-value red">{wrongCount}문항</span>
             </div>
             <div className="detail-item">
                <span className="detail-label">정답률</span>
-               <span className="detail-value">92%</span>
+               <span className="detail-value">{result.accuracy}%</span>
             </div>
           </div>
         </section>
@@ -96,12 +143,12 @@ const AnswerAnalyze = ({ onExit }) => {
           <div className="section-title">
             <Icons.ChartLine /> 취약 영역 분석
           </div>
-          
+
           <div className="chart-wrapper">
             {chartData.map((item, idx) => (
               <div key={idx} className="bar-container">
-                <div 
-                  className={`bar ${item.type}`} 
+                <div
+                  className={`bar ${item.type}`}
                   style={{ height: `${item.score}%` }}
                   data-score={`${item.score}점`}
                 ></div>
@@ -128,7 +175,7 @@ const AnswerAnalyze = ({ onExit }) => {
               <span className="badge-num">문제 {item.id}</span>
               <span className="badge-subject">{item.subject}</span>
             </div>
-            
+
             <div className="mistake-body">
               <h3 className="question-text">{item.question}</h3>
 

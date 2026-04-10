@@ -25,6 +25,10 @@ const weekSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  completed: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const roadmapDataSchema = new mongoose.Schema({

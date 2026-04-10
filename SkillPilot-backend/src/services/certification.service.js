@@ -38,7 +38,22 @@ const getRecommended = async (userId) => {
       profile.toJSON(),
       goal.toJSON()
     );
-    return recommendations;
+
+    // AI 추천 결과에서 title로 DB 자격증 매칭
+    if (Array.isArray(recommendations) && recommendations.length > 0) {
+      const titles = recommendations.map(r => r.title);
+      const { Op } = require('sequelize');
+      const matched = await Certification.findAll({
+        where: { title: { [Op.in]: titles } },
+      });
+
+      if (matched.length > 0) {
+        return matched;
+      }
+    }
+
+    // 매칭 실패 시 인기순 반환
+    return Certification.findAll({ order: [['popularity', 'DESC']], limit: 5 });
   } catch {
     // AI 서비스 실패 시 인기순 자격증 반환
     return Certification.findAll({ order: [['popularity', 'DESC']], limit: 5 });
@@ -69,4 +84,23 @@ const selectCertifications = async (userId, certificationIds) => {
   });
 };
 
-module.exports = { getAll, getById, getRankings, getRecommended, selectCertifications };
+/**
+ * 필터 UI 에 쓸 분야/레벨 옵션 반환
+ */
+const getFilterOptions = async () => {
+  const certs = await Certification.findAll({
+    attributes: ['level', 'field'],
+  });
+  const levels = Array.from(new Set(certs.map((c) => c.level).filter(Boolean)));
+  const fields = Array.from(new Set(certs.map((c) => c.field).filter(Boolean)));
+  return { levels, fields };
+};
+
+module.exports = {
+  getAll,
+  getById,
+  getRankings,
+  getRecommended,
+  selectCertifications,
+  getFilterOptions,
+};

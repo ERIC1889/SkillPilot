@@ -2,16 +2,30 @@ const Question = require('../models/mongodb/Question');
 const TestResult = require('../models/mongodb/TestResult');
 const WrongAnswerNote = require('../models/mongodb/WrongAnswerNote');
 const aiService = require('./ai.service');
+const questionBank = require('./questionBank.service');
 const ApiError = require('../utils/ApiError');
 
 const getQuestions = async (certificationId, count = 20) => {
+  const certId = Number(certificationId);
+
+  // 문제가 없거나 요청 수량보다 적으면 AI 로 자동 보충
+  const existing = await Question.countDocuments({ certificationId: certId });
+  if (existing < count) {
+    try {
+      console.log(`[cbt] Cert ${certId} 문제 ${existing}개 부족 — AI 자동 생성 시작`);
+      await questionBank.ensureQuestionsForCertification(certId, Math.max(15, Math.ceil(count / 2)));
+    } catch (err) {
+      console.warn('[cbt] 자동 문제 생성 실패:', err.message);
+    }
+  }
+
   const questions = await Question.aggregate([
-    { $match: { certificationId: Number(certificationId) } },
+    { $match: { certificationId: certId } },
     { $sample: { size: Number(count) } },
   ]);
 
   if (questions.length === 0) {
-    throw ApiError.notFound('해당 자격증의 문제가 없습니다');
+    throw ApiError.notFound('해당 자격증의 문제를 생성할 수 없습니다. 관리자에게 문의하세요.');
   }
 
   // Remove correctIndex from response
@@ -87,32 +101,12 @@ const submit = async (userId, { certificationId, answers }) => {
     subjectScores,
   });
 
-  // Generate wrong answer notes with AI analysis (async, don't block)
-  for (const wrong of wrongAnswers) {
-    const myAnswer = wrong.question.options[wrong.selectedIndex] || '미선택';
-    const correctAnswer = wrong.question.options[wrong.question.correctIndex];
-
-    try {
-      const analysis = await aiService.analyzeWrongAnswer(userId, {
-        question: wrong.question.question,
-        myAnswer,
-        correctAnswer,
-      });
-
-      await WrongAnswerNote.create({
-        userId,
-        testResultId: testResult._id,
-        questionId: wrong.question._id,
-        subject: wrong.question.subject,
-        question: wrong.question.question,
-        myAnswer,
-        correctAnswer,
-        explanation: analysis.explanation || '',
-        tip: analysis.tip || '',
-      });
-    } catch {
-      // Save without AI analysis if it fails
-      await WrongAnswerNote.create({
+  // Persist wrong answer notes immediately (without AI), then enrich in background
+  const wrongNoteDocs = await Promise.all(
+    wrongAnswers.map((wrong) => {
+      const myAnswer = wrong.question.options[wrong.selectedIndex] || '미선택';
+      const correctAnswer = wrong.question.options[wrong.question.correctIndex];
+      return WrongAnswerNote.create({
         userId,
         testResultId: testResult._id,
         questionId: wrong.question._id,
@@ -121,8 +115,27 @@ const submit = async (userId, { certificationId, answers }) => {
         myAnswer,
         correctAnswer,
       });
-    }
-  }
+    })
+  );
+
+  // Fire-and-forget: enrich with AI analysis in parallel, don't block the response
+  Promise.all(
+    wrongAnswers.map(async (wrong, idx) => {
+      const note = wrongNoteDocs[idx];
+      try {
+        const analysis = await aiService.analyzeWrongAnswer(userId, {
+          question: wrong.question.question,
+          myAnswer: note.myAnswer,
+          correctAnswer: note.correctAnswer,
+        });
+        note.explanation = analysis.explanation || '';
+        note.tip = analysis.tip || '';
+        await note.save();
+      } catch (err) {
+        console.warn('[cbt] 오답 AI 분석 실패:', err.message);
+      }
+    })
+  ).catch(() => {});
 
   return testResult;
 };

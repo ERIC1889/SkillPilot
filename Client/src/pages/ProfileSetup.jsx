@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiAward, FiBook, FiBriefcase, FiShoppingBag, FiChevronLeft } from 'react-icons/fi';
 import api from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 import '../styles/signup.css';
 
 function ProfileSetup() {
   const navigate = useNavigate();
+  const { refreshMe } = useAuth();
   const [form, setForm] = useState({
     job: '',
     grade: '',
@@ -35,6 +37,7 @@ function ProfileSetup() {
         major: form.major || null,
         interest: form.interest || null,
       });
+      await refreshMe();
       navigate('/goalsetting');
     } catch (err) {
       setError(err.response?.data?.message || '프로필 설정에 실패했습니다.');

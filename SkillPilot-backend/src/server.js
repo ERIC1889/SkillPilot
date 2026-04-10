@@ -2,6 +2,7 @@ const app = require('./app');
 const config = require('./config');
 const { sequelize } = require('./models/mysql');
 const connectMongoDB = require('./config/mongodb');
+const scheduler = require('./schedulers');
 
 const start = async () => {
   try {
@@ -15,6 +16,9 @@ const start = async () => {
     } catch (mongoErr) {
       console.warn('MongoDB connection failed (CBT/Roadmap features will be limited):', mongoErr.message);
     }
+
+    // Background schedulers (data.go.kr sync 등)
+    scheduler.start();
 
     // Start server
     app.listen(config.port, () => {

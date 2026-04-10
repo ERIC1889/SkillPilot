@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import '../styles/dashboard.css';
 import CBT from './CBT';
 import { useNavigate } from "react-router-dom";
@@ -31,6 +31,7 @@ function Dashboard() {
   const [currentTab, setCurrentTab] = useState('dashboard');
   const [scheduleViewMode, setScheduleViewMode] = useState('calendar');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [editFormData, setEditFormData] = useState({
     year: '', month: '', day: '',
     goal: '', amount: '', schedule: '', status: 'incomplete'
@@ -39,11 +40,163 @@ function Dashboard() {
   const [filterField, setFilterField] = useState('전체');
   const [dashboardData, setDashboardData] = useState(null);
 
-  useEffect(() => {
+  // Schedule state
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
+  const [schedules, setSchedules] = useState([]);
+
+  // Certification state
+  const [allCerts, setAllCerts] = useState([]);
+  const [certRankings, setCertRankings] = useState([]);
+  const [filterOptions, setFilterOptions] = useState({ levels: [], fields: [] });
+
+  // Roadmap state
+  const [roadmapData, setRoadmapData] = useState(null);
+
+  // Notices + tips (API)
+  const [notices, setNotices] = useState([]);
+  const [tips, setTips] = useState([]);
+
+  // Learning record modal
+  const [isLearningModalOpen, setIsLearningModalOpen] = useState(false);
+  const [learningForm, setLearningForm] = useState({
+    date: new Date().toISOString().split('T')[0],
+    studyHours: '',
+    topics: '',
+    notes: '',
+  });
+  const [learningSummary, setLearningSummary] = useState(null);
+
+  // User certs from dashboard
+  const userCerts = dashboardData?.userCerts || [];
+  const mainCert = userCerts[0]?.certification || null;
+
+  // Fetch dashboard data on mount and when returning to dashboard tab
+  const fetchDashboard = useCallback(() => {
     api.get('/dashboard')
       .then(res => setDashboardData(res.data.data))
       .catch(() => {});
+    api.get('/roadmap')
+      .then(res => {
+        const roadmaps = res.data.data || [];
+        if (roadmaps.length > 0) setRoadmapData(roadmaps[0]);
+        else setRoadmapData(null);
+      })
+      .catch(() => {});
+    api.get('/learning-records/summary')
+      .then(res => setLearningSummary(res.data.data))
+      .catch(() => setLearningSummary(null));
   }, []);
+
+  useEffect(() => {
+    fetchDashboard();
+  }, [fetchDashboard]);
+
+  // Fetch schedules when year/month changes
+  const fetchSchedules = useCallback(() => {
+    api.get('/schedules', { params: { year: currentYear, month: currentMonth } })
+      .then(res => setSchedules(res.data.data || []))
+      .catch(() => setSchedules([]));
+  }, [currentYear, currentMonth]);
+
+  useEffect(() => {
+    fetchSchedules();
+  }, [fetchSchedules]);
+
+  // Fetch certifications when search tab is active
+  useEffect(() => {
+    if (currentTab === 'search') {
+      api.get('/certifications')
+        .then(res => setAllCerts(res.data.data || []))
+        .catch(() => setAllCerts([]));
+      api.get('/certifications/rankings')
+        .then(res => setCertRankings(res.data.data || []))
+        .catch(() => setCertRankings([]));
+      api.get('/certifications/filter-options')
+        .then(res => setFilterOptions(res.data.data || { levels: [], fields: [] }))
+        .catch(() => setFilterOptions({ levels: [], fields: [] }));
+    }
+  }, [currentTab]);
+
+  // Fetch notices + tips when info tab is active
+  useEffect(() => {
+    if (currentTab === 'info') {
+      api.get('/notices', { params: { type: '공지사항', limit: 10 } })
+        .then(res => setNotices(res.data.data || []))
+        .catch(() => setNotices([]));
+      api.get('/notices', { params: { type: '학습 팁', limit: 10 } })
+        .then(res => setTips(res.data.data || []))
+        .catch(() => setTips([]));
+    }
+  }, [currentTab]);
+
+  // Refresh data when switching back to dashboard tab
+  useEffect(() => {
+    if (currentTab === 'dashboard') {
+      fetchDashboard();
+    }
+  }, [currentTab, fetchDashboard]);
+
+  // Build calendarDays dynamically from schedules
+  const buildCalendarDays = () => {
+    const firstDay = new Date(currentYear, currentMonth - 1, 1).getDay();
+    const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+
+    const days = [];
+    // Empty cells before first day
+    for (let i = 0; i < firstDay; i++) {
+      days.push({ day: '', type: 'empty' });
+    }
+    // Each day of the month
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const schedule = schedules.find(s => s.date === dateStr);
+      if (schedule) {
+        const type = schedule.status === '완료' ? 'done' : schedule.status === '예정' ? 'scheduled' : 'default';
+        days.push({
+          day: d,
+          type,
+          statusLabel: schedule.status,
+          goal: schedule.goal,
+          amount: schedule.amount,
+          scheduleId: schedule.id,
+        });
+      } else {
+        days.push({ day: d, type: 'default' });
+      }
+    }
+    return days;
+  };
+
+  const calendarDays = buildCalendarDays();
+
+  // Build scheduleListData from fetched schedules that have goals
+  const scheduleListData = schedules
+    .filter(s => s.goal)
+    .map(s => {
+      const dateObj = new Date(s.date);
+      const day = dateObj.getDate();
+      return {
+        id: s.id,
+        date: `${day}일`,
+        fullDate: `${dateObj.getFullYear()}년 ${dateObj.getMonth() + 1}월`,
+        title: s.goal,
+        sub1: `학습 분량: ${s.amount || '-'}`,
+        sub2: `예정: ${s.event || '-'}`,
+        status: s.status === '완료' ? 'done' : 'scheduled',
+        rawDate: s.date,
+      };
+    });
+
+  // Filter certifications client-side
+  const filteredCerts = allCerts.filter(cert => {
+    if (filterDifficulty !== '전체' && cert.level !== filterDifficulty) return false;
+    if (filterField !== '전체' && cert.field !== filterField) return false;
+    return true;
+  });
+
+  // Roadmap weeks for dashboard card
+  const roadmapWeeks = roadmapData?.weeks || [];
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleCertModal = () => setIsCertModalOpen(!isCertModalOpen);
@@ -59,67 +212,12 @@ function Dashboard() {
     navigate('/');
   };
 
-  // --- Data ---
-  const calendarDays = [
-    { day: '', type: 'empty' }, { day: '', type: 'empty' }, { day: '', type: 'empty' }, { day: '', type: 'empty' }, { day: '', type: 'empty' }, { day: '', type: 'empty' },
-    { day: 1, type: 'default' }, { day: 2, type: 'default' }, { day: 3, type: 'default' }, { day: 4, type: 'default' },
-    { day: 5, type: 'done', statusLabel: '완료', goal: '알고리즘 기초 학습', amount: '챕터 1-3 (약 50페이지)' },
-    { day: 6, type: 'default' }, { day: 7, type: 'default' },
-    { day: 8, type: 'done', statusLabel: '완료', goal: '자료구조 심화 복습', amount: '연습문제 10문항' },
-    { day: 9, type: 'default' }, { day: 10, type: 'default' }, { day: 11, type: 'default' },
-    { day: 12, type: 'scheduled', statusLabel: '예정', goal: '알고리즘 문제풀이', amount: '백준 5문제' },
-    { day: 13, type: 'default' }, { day: 14, type: 'default' },
-    { day: 15, type: 'scheduled', statusLabel: '예정', goal: '데이터베이스 설계', amount: '프로젝트 실습 1개' },
-    { day: 16, type: 'default' }, { day: 17, type: 'default' }, { day: 18, type: 'default' },
-    { day: 19, type: 'scheduled', statusLabel: '예정', goal: '운영체제 개념 정리', amount: '챕터 4-6' },
-    { day: 20, type: 'default' }, { day: 21, type: 'default' },
-    { day: 22, type: 'scheduled', statusLabel: '예정', goal: '네트워크 프로토콜 학습', amount: '강의 3개 시청' },
-    { day: 23, type: 'default' }, { day: 24, type: 'default' }, { day: 25, type: 'default' },
-    { day: 26, type: 'scheduled', statusLabel: '예정', goal: '최종 복습 및 정리', amount: '오답노트 정리' },
-    { day: 27, type: 'default' }, { day: 28, type: 'default' },
-    { day: 29, type: 'scheduled', statusLabel: '예정', goal: '모의고사 마무리', amount: '전범위 모의고사' },
-    { day: 30, type: 'default' }
-  ];
-
-  const scheduleListData = [
-    { date: '5일', fullDate: '2025년 11월', title: '알고리즘 기초 학습', sub1: '학습 분량: 챕터 1-3 (약 50페이지)', sub2: '예정: 오후 2시 온라인 강의', status: 'done' },
-    { date: '8일', fullDate: '2025년 11월', title: '자료구조 심화 복습', sub1: '학습 분량: 연습문제 10문항', sub2: '예정: 저녁 7시 스터디 그룹', status: 'done' },
-    { date: '12일', fullDate: '2025년 11월', title: '알고리즘 문제풀이', sub1: '학습 분량: 백준 5문제', sub2: '예정: 모의고사 1회차', status: 'scheduled' },
-    { date: '15일', fullDate: '2025년 11월', title: '데이터베이스 설계', sub1: '학습 분량: 프로젝트 실습 1개', sub2: '예정: 멘토링 세션 오후 3시', status: 'scheduled' },
-    { date: '19일', fullDate: '2025년 11월', title: '운영체제 개념 정리', sub1: '학습 분량: 챕터 4-6', sub2: '예정: 모의고사 2회차', status: 'scheduled' },
-    { date: '22일', fullDate: '2025년 11월', title: '네트워크 프로토콜 학습', sub1: '학습 분량: 강의 3개 시청', sub2: '예정: 실전 모의고사', status: 'scheduled' },
-    { date: '26일', fullDate: '2025년 11월', title: '최종 복습 및 정리', sub1: '학습 분량: 오답노트 정리', sub2: '예정: 최종 점검', status: 'scheduled' },
-    { date: '29일', fullDate: '2025년 11월', title: '모의고사 마무리', sub1: '학습 분량: 전범위 모의고사', sub2: '예정: 실전 시험 대비', status: 'scheduled' },
-  ];
-
-  const noticeData = [
-    { type: '공지사항', date: '2025-11-25', title: '2025년 정보처리기사 시험 일정 안내' },
-    { type: '학습 팁', date: '2025-11-23', title: '빅데이터분석기사 합격 후기 및 팁' },
-    { type: '학습 팁', date: '2025-11-20', title: 'SQLD 단기 합격 전략' },
-  ];
-
-  const studyTips = [
-    { icon: '📖', title: '효율적인 알고리즘 학습법', desc: '문제를 먼저 풀어보고, 해설을 보며 다양한 접근법을 학습하세요. 반복 학습이 핵심입니다.' },
-    { icon: '🏅', title: 'CBT 모의고사 활용 팁', desc: '실전과 동일한 환경에서 시간 제한을 두고 연습하면 실전 감각을 키울 수 있습니다.' },
-    { icon: '📅', title: '자격증 시험 D-30 체크리스트', desc: '약점 보완, 오답노트 정리, 모의고사 3회 이상 풀이를 완료하세요.' },
-  ];
-
-  const recommendedCerts = [
-    { title: '정보처리기사', tags: ['중급', 'IT/개발'], popularity: 95, duration: '3-6개월' },
-    { title: '빅데이터분석기사', tags: ['고급', '데이터 분석'], popularity: 88, duration: '4-8개월' },
-    { title: 'SQLD', tags: ['초급-중급', '데이터 분석'], popularity: 92, duration: '2-3개월' },
-    { title: '정보보안기사', tags: ['고급', '보안'], popularity: 85, duration: '4-6개월' },
-    { title: '네트워크관리사', tags: ['중급', '네트워크'], popularity: 78, duration: '2-4개월' },
-    { title: 'AWS Solutions Architect', tags: ['고급', 'IT/개발'], popularity: 90, duration: '3-5개월' },
-  ];
-
-  const certRankings = [
-    { rank: 1, name: '정보처리기사', growth: '+15%' },
-    { rank: 2, name: 'SQLD', growth: '+22%' },
-    { rank: 3, name: 'AWS Solutions Architect', growth: '+18%' },
-    { rank: 4, name: '빅데이터분석기사', growth: '+12%' },
-    { rank: 5, name: 'CCNA', growth: '+8%' },
-  ];
+  // 공지/팁 은 currentTab === 'info' 진입 시 /api/notices 에서 가져옵니다.
+  const formatNoticeDate = (n) => {
+    const d = n.published_at || n.createdAt;
+    if (!d) return '';
+    return new Date(d).toISOString().split('T')[0];
+  };
 
   const userName = user?.name || '사용자';
   const userInfo = {
@@ -129,8 +227,9 @@ function Dashboard() {
     joinedDate: user?.createdAt ? new Date(user.createdAt).toLocaleDateString('ko-KR') : ''
   };
 
+  const monthHours = learningSummary?.monthHours ?? dashboardData?.monthlyStudyHours ?? 0;
   const myActivityStats = [
-    { label: '총 학습 시간', value: dashboardData?.monthlyStudyHours ? `${dashboardData.monthlyStudyHours}시간` : '0시간', sub: '이번 달 기준', icon: <ClockIcon /> },
+    { label: '총 학습 시간', value: `${monthHours}시간`, sub: '이번 달 기준', icon: <ClockIcon /> },
     { label: '취득 자격증', value: dashboardData?.certCount ? `${dashboardData.certCount}개` : '0개', sub: '준비중 포함', icon: <DiplomaIcon /> },
     { label: '로드맵 진행', value: dashboardData?.roadmapWeeks ? `${dashboardData.roadmapWeeks}주` : '0주', sub: '전체 학습 주차', icon: <TrophyIcon /> },
   ];
@@ -143,19 +242,120 @@ function Dashboard() {
 
   // --- Event handlers ---
   const handleEditClick = (item) => {
+    const parts = item.rawDate ? item.rawDate.split('-') : [];
+    setEditingId(item.id || null);
     setEditFormData({
-      year: '2025', month: '11', day: item.date.replace('일', ''),
-      goal: item.title, amount: item.sub1.replace('학습 분량: ', ''),
-      schedule: item.sub2.replace('예정: ', ''), status: item.status === 'done' ? 'complete' : 'incomplete'
+      year: parts[0] || String(currentYear),
+      month: parts[1] || String(currentMonth),
+      day: parts[2] ? String(parseInt(parts[2])) : item.date.replace('일', ''),
+      goal: item.title,
+      amount: (item.sub1 || '').replace('학습 분량: ', ''),
+      schedule: (item.sub2 || '').replace('예정: ', ''),
+      status: item.status === 'done' ? 'complete' : 'incomplete'
     });
     setIsEditModalOpen(true);
   };
-  const handleEditClose = () => setIsEditModalOpen(false);
-  const handleEditSave = () => { alert("일정이 수정되었습니다!"); setIsEditModalOpen(false); };
+  const handleEditClose = () => { setIsEditModalOpen(false); setEditingId(null); };
+
+  const handleEditSave = async () => {
+    const dateStr = `${editFormData.year}-${String(editFormData.month).padStart(2, '0')}-${String(editFormData.day).padStart(2, '0')}`;
+    const payload = {
+      date: dateStr,
+      goal: editFormData.goal,
+      amount: editFormData.amount,
+      event: editFormData.schedule,
+      status: editFormData.status === 'complete' ? '완료' : '예정',
+    };
+    try {
+      if (editingId) {
+        await api.put('/schedules/' + editingId, payload);
+      } else {
+        await api.post('/schedules', payload);
+      }
+      fetchSchedules();
+      setIsEditModalOpen(false);
+      setEditingId(null);
+    } catch (err) {
+      alert('일정 저장에 실패했습니다.');
+    }
+  };
+
+  const handleAddSchedule = () => {
+    setEditingId(null);
+    setEditFormData({
+      year: String(currentYear),
+      month: String(currentMonth),
+      day: '',
+      goal: '', amount: '', schedule: '', status: 'incomplete'
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleDeleteSchedule = async (id) => {
+    if (!window.confirm('이 일정을 삭제하시겠습니까?')) return;
+    try {
+      await api.delete('/schedules/' + id);
+      fetchSchedules();
+    } catch (err) {
+      alert('일정 삭제에 실패했습니다.');
+    }
+  };
+
   const handleFormChange = (e) => { const { name, value } = e.target; setEditFormData(prev => ({ ...prev, [name]: value })); };
 
+  // Month navigation
+  const handlePrevMonth = () => {
+    if (currentMonth === 1) { setCurrentMonth(12); setCurrentYear(currentYear - 1); }
+    else { setCurrentMonth(currentMonth - 1); }
+  };
+  const handleNextMonth = () => {
+    if (currentMonth === 12) { setCurrentMonth(1); setCurrentYear(currentYear + 1); }
+    else { setCurrentMonth(currentMonth + 1); }
+  };
+
+  // Cert card display
+  const certTitle = mainCert?.title || '자격증 미선택';
+  const certDuration = mainCert?.duration || '-';
+  const certJobs = mainCert?.jobs ? mainCert.jobs.split(',').map(j => j.trim()) : [];
+  const certExamInfo = mainCert?.exam_info || '';
+  const certTips = mainCert?.tips ? mainCert.tips.split('\n').filter(Boolean) : [];
+
+  // Roadmap progress — count weeks explicitly marked completed
+  const completedWeekCount = roadmapWeeks.filter((w) => w.completed === true).length;
+  const roadmapProgress = roadmapWeeks.length > 0
+    ? Math.round((completedWeekCount / roadmapWeeks.length) * 100)
+    : 0;
+
+  // 학습 기록 저장
+  const saveLearningRecord = async () => {
+    try {
+      await api.post('/learning-records', {
+        date: learningForm.date,
+        studyHours: Number(learningForm.studyHours) || 0,
+        topics: learningForm.topics.split(',').map((s) => s.trim()).filter(Boolean),
+        notes: learningForm.notes,
+      });
+      setIsLearningModalOpen(false);
+      setLearningForm({
+        date: new Date().toISOString().split('T')[0],
+        studyHours: '',
+        topics: '',
+        notes: '',
+      });
+      fetchDashboard();
+    } catch (err) {
+      alert(err.response?.data?.message || '학습 기록 저장에 실패했습니다.');
+    }
+  };
+
   if (currentTab === 'cbt') {
-    return <CBT onExit={() => handlePageChange('dashboard')} />;
+    return (
+      <CBT
+        onExit={() => handlePageChange('dashboard')}
+        certId={userCerts[0]?.certification_id}
+        certTitle={mainCert?.title || '자격증'}
+      />
+    );
   }
 
   return (
@@ -179,6 +379,8 @@ function Dashboard() {
           <button className={`sidebar-item ${currentTab === 'schedule' ? 'active' : ''}`} onClick={() => handlePageChange('schedule')}><CalendarIcon /> 일정 관리</button>
           <button className={`sidebar-item ${currentTab === 'info' ? 'active' : ''}`} onClick={() => handlePageChange('info')}><DocIcon /> 정보 제공</button>
           <button className={`sidebar-item ${currentTab === 'search' ? 'active' : ''}`} onClick={() => handlePageChange('search')}><SearchIcon /> 자격증 탐색</button>
+          <button className="sidebar-item" onClick={() => navigate('/mock-interview')}><TrophyIcon /> AI 모의면접</button>
+          <button className="sidebar-item" onClick={() => navigate('/job-matching')}><SearchIcon /> 채용 매칭</button>
           <button className={`sidebar-item ${currentTab === 'mypage' ? 'active' : ''}`} onClick={() => handlePageChange('mypage')}><UserIcon /> 마이페이지</button>
         </nav>
       </aside>
@@ -186,20 +388,69 @@ function Dashboard() {
       {isCertModalOpen && (
         <div className="modal-overlay" onClick={toggleCertModal}>
           <div className="cert-modal-container" onClick={e => e.stopPropagation()}>
-            <div className="modal-header"><h2>정보처리기사</h2><button className="close-btn" onClick={toggleCertModal}><CloseIcon /></button></div>
+            <div className="modal-header"><h2>{certTitle}</h2><button className="close-btn" onClick={toggleCertModal}><CloseIcon /></button></div>
             <div className="modal-body-content">
-              <div className="info-group"><p className="info-label">자격증명</p><p className="info-value">정보처리기사</p></div>
-              <div className="info-group"><p className="info-label">난이도</p><p className="info-value">중급</p></div>
-              <div className="info-group"><p className="info-label">준비기간</p><p className="info-value">3-6개월</p></div>
+              <div className="info-group"><p className="info-label">자격증명</p><p className="info-value">{certTitle}</p></div>
+              <div className="info-group"><p className="info-label">난이도</p><p className="info-value">{mainCert?.level || '-'}</p></div>
+              <div className="info-group"><p className="info-label">준비기간</p><p className="info-value">{certDuration}</p></div>
               <div className="info-group">
                 <p className="info-label">관련 직무</p>
-                <div className="job-tags"><span className="job-tag">백엔드 개발자</span><span className="job-tag">시스템 분석가</span></div>
+                <div className="job-tags">{certJobs.length > 0 ? certJobs.map((j, i) => <span key={i} className="job-tag">{j}</span>) : <span className="info-value">-</span>}</div>
               </div>
-              <div className="info-group"><p className="info-label">시험 일정</p><p className="info-value">2025년 12월 1일 (일요일) 오전 9시</p></div>
-              <div className="info-group">
-                <p className="info-label">준비 팁</p>
-                <ul className="tip-list"><li>기출문제를 3회 이상 반복하세요</li><li>SQL 쿼리 작성을 연습하세요</li></ul>
-              </div>
+              {certExamInfo && <div className="info-group"><p className="info-label">시험 정보</p><p className="info-value">{certExamInfo}</p></div>}
+              {certTips.length > 0 && (
+                <div className="info-group">
+                  <p className="info-label">준비 팁</p>
+                  <ul className="tip-list">{certTips.map((tip, i) => <li key={i}>{tip}</li>)}</ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isLearningModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsLearningModalOpen(false)}>
+          <div className="edit-form-card" onClick={(e) => e.stopPropagation()}>
+            <h3 style={{ marginTop: 0 }}>학습 기록 추가</h3>
+            <div className="form-group">
+              <label>학습 날짜</label>
+              <input
+                type="date"
+                value={learningForm.date}
+                onChange={(e) => setLearningForm({ ...learningForm, date: e.target.value })}
+              />
+            </div>
+            <div className="form-group">
+              <label>학습 시간 (시간)</label>
+              <input
+                type="number"
+                step="0.5"
+                min="0"
+                value={learningForm.studyHours}
+                onChange={(e) => setLearningForm({ ...learningForm, studyHours: e.target.value })}
+              />
+            </div>
+            <div className="form-group">
+              <label>학습 주제 (쉼표로 구분)</label>
+              <input
+                type="text"
+                placeholder="예) SQL 기초, 정규화"
+                value={learningForm.topics}
+                onChange={(e) => setLearningForm({ ...learningForm, topics: e.target.value })}
+              />
+            </div>
+            <div className="form-group">
+              <label>메모</label>
+              <input
+                type="text"
+                value={learningForm.notes}
+                onChange={(e) => setLearningForm({ ...learningForm, notes: e.target.value })}
+              />
+            </div>
+            <div className="form-actions">
+              <button className="cancel-form-btn" onClick={() => setIsLearningModalOpen(false)}>취소</button>
+              <button className="save-form-btn" onClick={saveLearningRecord}>저장</button>
             </div>
           </div>
         </div>
@@ -236,7 +487,7 @@ function Dashboard() {
             </section>
 
             <section className="dashboard-card cert-card">
-              <div className="card-left"><div className="icon-box blue-bg"><DiplomaIcon /></div><div><h3>정보처리기사 <span className="d-day">D-30</span></h3><p className="sub-text">시험일: 2025년 12월 1일 (일요일) 오전 9시</p></div></div>
+              <div className="card-left"><div className="icon-box blue-bg"><DiplomaIcon /></div><div><h3>{certTitle}{mainCert ? '' : ''}</h3><p className="sub-text">{certExamInfo || (mainCert ? `준비기간: ${certDuration}` : '자격증을 선택해주세요')}</p></div></div>
               <button className="light-btn" onClick={toggleCertModal}>상세보기</button>
             </section>
 
@@ -244,25 +495,41 @@ function Dashboard() {
               <div className="dashboard-card roadmap-card">
                 <div className="card-header"><TargetIcon /><h3>학습 로드맵</h3></div>
                 <div className="roadmap-list">
-                  <div className="roadmap-item completed"><span className="check-icon">✔</span><span>프로그래밍 기초 이론</span></div>
-                  <div className="roadmap-item completed"><span className="check-icon">✔</span><span>자료구조 심화 학습</span></div>
-                  <div className="roadmap-item active"><span className="check-icon active-check">✔</span><span>알고리즘 문제풀이</span><span className="status-badge">진행중</span></div>
-                  <div className="roadmap-item"><span className="check-icon empty"></span><span>데이터베이스 기초</span></div>
+                  {roadmapWeeks.length > 0 ? roadmapWeeks.slice(0, 4).map((week, i) => {
+                    const isCompleted = i < Math.floor(roadmapWeeks.length * roadmapProgress / 100);
+                    const isActive = i === Math.floor(roadmapWeeks.length * roadmapProgress / 100);
+                    return (
+                      <div key={week.weekId || i} className={`roadmap-item ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}`}>
+                        <span className={`check-icon ${isCompleted ? '' : isActive ? 'active-check' : 'empty'}`}>{isCompleted || isActive ? '✔' : ''}</span>
+                        <span>{week.title}</span>
+                        {isActive && <span className="status-badge">진행중</span>}
+                      </div>
+                    );
+                  }) : (
+                    <>
+                      <div className="roadmap-item"><span className="check-icon empty"></span><span>로드맵을 생성해주세요</span></div>
+                    </>
+                  )}
                 </div>
                 <div className="progress-section">
-                  <div className="progress-info"><span>전체 진행률</span><span className="percent">50%</span></div>
-                  <div className="progress-bar-bg"><div className="progress-bar-fill" style={{ width: '50%' }}></div></div>
+                  <div className="progress-info"><span>전체 진행률</span><span className="percent">{roadmapWeeks.length > 0 ? `${roadmapProgress}%` : '0%'}</span></div>
+                  <div className="progress-bar-bg"><div className="progress-bar-fill" style={{ width: `${roadmapWeeks.length > 0 ? roadmapProgress : 0}%` }}></div></div>
                 </div>
                 <div className="other-certs">
                   <p>다른 자격증 검색</p>
-                  <div className="tags"><span className="tag">빅데이터분석기사 ⓘ</span><span className="tag">SQLD ⓘ</span></div>
+                  <div className="tags">
+                    {userCerts.slice(1, 3).map((uc, i) => (
+                      <span key={i} className="tag">{uc.certification?.title || '자격증'} ⓘ</span>
+                    ))}
+                    {userCerts.length <= 1 && <span className="tag" onClick={() => handlePageChange('search')} style={{cursor:'pointer'}}>자격증 탐색하기 →</span>}
+                  </div>
                 </div>
               </div>
 
               <div className="dashboard-card calendar-card">
                 <div className="card-header"><CalendarIcon /><h3>학습 캘린더</h3></div>
                 <div className="calendar-content">
-                  <h4 className="month-title">2025년 11월</h4>
+                  <h4 className="month-title">{currentYear}년 {currentMonth}월</h4>
                   <div className="calendar-grid">
                     {['일','월','화','수','목','금','토'].map(d => (<div key={d} className="day-name">{d}</div>))}
                     {calendarDays.map((date, idx) => (
@@ -282,8 +549,31 @@ function Dashboard() {
             </div>
 
             <section className="dashboard-card cbt-card">
-              <div className="card-left"><div className="icon-box blue-bg"><GradCapIcon /></div><div><h3>CBT 모의고사</h3><p className="sub-text">실전처럼 연습하고 실력을 점검하세요</p></div></div>
-              <button className="dark-btn" onClick={() => handlePageChange('cbt')}>CBT 모의고사 시작</button>
+              <div className="card-left"><div className="icon-box blue-bg"><GradCapIcon /></div><div><h3>CBT 모의고사</h3><p className="sub-text">{mainCert?.title ? `${mainCert.title} 모의고사로 실력을 점검하세요` : '자격증을 먼저 선택해주세요'}</p></div></div>
+              <button className="dark-btn" disabled={!mainCert} onClick={() => handlePageChange('cbt')}>CBT 모의고사 시작</button>
+            </section>
+
+            <div className="dashboard-grid">
+              <section className="dashboard-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/mock-interview')}>
+                <div className="card-header"><TrophyIcon /><h3>AI 모의면접</h3></div>
+                <p className="sub-text">선택한 직무에 맞춘 기술 면접을 연습하세요</p>
+                <button className="dark-btn" style={{ marginTop: 12 }}>면접 시작</button>
+              </section>
+              <section className="dashboard-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/job-matching')}>
+                <div className="card-header"><SearchIcon /><h3>채용 매칭</h3></div>
+                <p className="sub-text">내 역량과 자격증을 기준으로 매칭된 공고를 확인하세요</p>
+                <button className="dark-btn" style={{ marginTop: 12 }}>매칭 보기</button>
+              </section>
+            </div>
+
+            <section className="dashboard-card">
+              <div className="card-header"><ClockIcon /><h3>학습 기록</h3></div>
+              <p className="sub-text">
+                이번 주 {learningSummary?.weekHours || 0}시간 · 이번 달 {learningSummary?.monthHours || 0}시간
+              </p>
+              <button className="dark-btn" style={{ marginTop: 12 }} onClick={() => setIsLearningModalOpen(true)}>
+                오늘 학습 기록 추가
+              </button>
             </section>
           </div>
         )}
@@ -297,7 +587,11 @@ function Dashboard() {
             <div className="schedule-content-box">
               {scheduleViewMode === 'calendar' ? (
                 <div className="big-calendar-view">
-                  <div className="calendar-header-center"><CalendarIcon /> <h3>2025년 11월</h3></div>
+                  <div className="calendar-header-center">
+                    <button className="light-btn" onClick={handlePrevMonth} style={{marginRight: '8px', padding: '4px 12px'}}>◀</button>
+                    <CalendarIcon /> <h3>{currentYear}년 {currentMonth}월</h3>
+                    <button className="light-btn" onClick={handleNextMonth} style={{marginLeft: '8px', padding: '4px 12px'}}>▶</button>
+                  </div>
                   <div className="calendar-grid big-grid">
                     {['일','월','화','수','목','금','토'].map(d => (<div key={d} className="day-name">{d}</div>))}
                     {calendarDays.map((date, idx) => (
@@ -318,8 +612,12 @@ function Dashboard() {
                 </div>
               ) : (
                 <div className="schedule-list-view">
-                  <h3 className="list-view-title">전체 일정</h3>
+                  <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px'}}>
+                    <h3 className="list-view-title" style={{margin: 0}}>전체 일정</h3>
+                    <button className="dark-btn" onClick={handleAddSchedule} style={{padding: '8px 16px', fontSize: '14px'}}>일정 추가</button>
+                  </div>
                   <div className="schedule-list-container">
+                    {scheduleListData.length === 0 && <p style={{textAlign: 'center', color: '#999', padding: '24px'}}>등록된 일정이 없습니다.</p>}
                     {scheduleListData.map((item, index) => (
                       <div className="schedule-list-item clickable" key={index} onClick={() => handleEditClick(item)}>
                         <div className="list-date-box"><span className="small-year">{item.fullDate}</span><span className="big-date">{item.date}</span></div>
@@ -328,8 +626,9 @@ function Dashboard() {
                           <p className="list-desc">{item.sub1}</p>
                           <p className="list-desc">{item.sub2}</p>
                         </div>
-                        <div className="list-status-box">
+                        <div className="list-status-box" style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
                           {item.status === 'done' ? <span className="status-pill done"><CheckIcon /> 완료</span> : <span className="status-pill scheduled">예정</span>}
+                          <button className="light-btn" style={{padding: '4px 10px', fontSize: '12px', color: '#e74c3c', borderColor: '#e74c3c'}} onClick={(e) => { e.stopPropagation(); handleDeleteSchedule(item.id); }}>삭제</button>
                         </div>
                       </div>
                     ))}
@@ -346,11 +645,14 @@ function Dashboard() {
             <div className="dashboard-card info-card">
               <h3 className="section-title">공지사항 및 새소식</h3>
               <div className="notice-list">
-                {noticeData.map((notice, i) => (
-                  <div key={i} className="notice-item">
+                {notices.length === 0 && (
+                  <p style={{ color: '#999', padding: 16 }}>등록된 공지가 없습니다.</p>
+                )}
+                {notices.map((notice) => (
+                  <div key={notice.id} className="notice-item">
                     <div className="notice-left">
-                      <span className={`notice-tag ${notice.type === '공지사항' ? 'tag-blue' : 'tag-gray'}`}>{notice.type}</span>
-                      <span className="notice-date">{notice.date}</span>
+                      <span className="notice-tag tag-blue">{notice.type}</span>
+                      <span className="notice-date">{formatNoticeDate(notice)}</span>
                       <span className="notice-title">{notice.title}</span>
                     </div>
                     <div className="notice-right"><ChevronRight /></div>
@@ -361,10 +663,16 @@ function Dashboard() {
             <div className="dashboard-card info-card">
               <h3 className="section-title">자격증 학습 팁</h3>
               <div className="study-tips-list">
-                {studyTips.map((tip, i) => (
-                  <div key={i} className="tip-card">
-                    <div className="tip-icon-box">{tip.icon}</div>
-                    <div className="tip-content"><h4>{tip.title}</h4><p>{tip.desc}</p></div>
+                {tips.length === 0 && (
+                  <p style={{ color: '#999', padding: 16 }}>등록된 학습 팁이 없습니다.</p>
+                )}
+                {tips.map((tip) => (
+                  <div key={tip.id} className="tip-card">
+                    <div className="tip-icon-box">{tip.icon || '💡'}</div>
+                    <div className="tip-content">
+                      <h4>{tip.title}</h4>
+                      <p>{tip.content}</p>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -378,9 +686,9 @@ function Dashboard() {
             <div className="dashboard-card search-filter-card">
               <div className="filter-header"><FilterIcon /> <h3>필터</h3></div>
               <div className="filter-row">
-                <span className="filter-label">난이도</span>
+                <span className="filter-label">자격구분</span>
                 <div className="filter-buttons">
-                  {['전체', '초급', '중급', '고급'].map(f => (
+                  {['전체', ...filterOptions.levels].map(f => (
                     <button key={f} className={`filter-btn ${filterDifficulty === f ? 'active' : ''}`} onClick={() => setFilterDifficulty(f)}>{f}</button>
                   ))}
                 </div>
@@ -388,7 +696,7 @@ function Dashboard() {
               <div className="filter-row">
                 <span className="filter-label">분야</span>
                 <div className="filter-buttons">
-                  {['전체', 'IT/개발', '데이터 분석', '네트워크', '보안', '디자인'].map(f => (
+                  {['전체', ...filterOptions.fields].map(f => (
                     <button key={f} className={`filter-btn ${filterField === f ? 'active' : ''}`} onClick={() => setFilterField(f)}>{f}</button>
                   ))}
                 </div>
@@ -398,16 +706,20 @@ function Dashboard() {
               <div className="recommended-section">
                 <h3 className="section-title-sm">추천 자격증</h3>
                 <div className="cert-grid-2col">
-                  {recommendedCerts.map((cert, i) => (
-                    <div key={i} className="dashboard-card cert-item-card">
+                  {filteredCerts.length === 0 && <p style={{color: '#999', padding: '16px'}}>조건에 맞는 자격증이 없습니다.</p>}
+                  {filteredCerts.map((cert, i) => (
+                    <div key={cert.id || i} className="dashboard-card cert-item-card">
                       <div className="cert-card-header">
                         <h4>{cert.title}</h4>
-                        <div className="cert-tags">{cert.tags.map((t, idx) => <span key={idx} className="cert-mini-tag">{t}</span>)}</div>
+                        <div className="cert-tags">
+                          <span className="cert-mini-tag">{cert.level}</span>
+                          {cert.field && <span className="cert-mini-tag">{cert.field}</span>}
+                        </div>
                       </div>
                       <div className="cert-stats">
-                        <div className="stat-row"><span>인기도</span><span>{cert.popularity}%</span></div>
-                        <div className="stat-bar-bg"><div className="stat-bar-fill" style={{width: `${cert.popularity}%`}}></div></div>
-                        <div className="stat-row bottom"><span className="stat-label">준비기간</span><span className="stat-val">{cert.duration}</span></div>
+                        <div className="stat-row"><span>인기도</span><span>{cert.popularity || 0}%</span></div>
+                        <div className="stat-bar-bg"><div className="stat-bar-fill" style={{width: `${cert.popularity || 0}%`}}></div></div>
+                        <div className="stat-row bottom"><span className="stat-label">준비기간</span><span className="stat-val">{cert.duration || '-'}</span></div>
                       </div>
                     </div>
                   ))}
@@ -419,8 +731,8 @@ function Dashboard() {
                   <div className="ranking-list">
                     {certRankings.map((item, i) => (
                       <div key={i} className="ranking-item">
-                        <div className="rank-left"><span className="rank-circle">{item.rank}</span><span className="rank-name">{item.name}</span></div>
-                        <span className="rank-growth">{item.growth} ↑</span>
+                        <div className="rank-left"><span className="rank-circle">{item.rank || i + 1}</span><span className="rank-name">{item.title || item.name}</span></div>
+                        <span className="rank-growth">{item.growth || `${item.popularity || 0}%`} ↑</span>
                       </div>
                     ))}
                   </div>

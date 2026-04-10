@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiMonitor, FiServer, FiCode, FiSmartphone, FiDatabase, FiBarChart2, FiLayers, FiMoreHorizontal, FiChevronLeft } from 'react-icons/fi';
 import api from '../services/api';
+import { useAuth } from '../contexts/AuthContext';
 import '../styles/signup.css';
 
 function GoalSetting() {
   const navigate = useNavigate();
+  const { refreshMe } = useAuth();
   const [selectedRoles, setSelectedRoles] = useState([]);
   const [period, setPeriod] = useState(1);
   const [etcRole, setEtcRole] = useState('');
@@ -38,6 +40,7 @@ function GoalSetting() {
         custom_role: etcRole || null,
         period: `${period}개월`,
       });
+      await refreshMe();
       navigate('/CertificationRecommendation');
     } catch (err) {
       setError(err.response?.data?.message || '목표 설정에 실패했습니다.');

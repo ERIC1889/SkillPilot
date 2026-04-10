@@ -8,8 +8,9 @@ const Notice = sequelize.define('Notice', {
     autoIncrement: true,
   },
   type: {
-    type: DataTypes.ENUM('공지', '업데이트', '이벤트'),
+    type: DataTypes.ENUM('공지사항', '학습 팁', '업데이트', '이벤트'),
     allowNull: false,
+    defaultValue: '공지사항',
   },
   title: {
     type: DataTypes.STRING(200),
@@ -17,6 +18,14 @@ const Notice = sequelize.define('Notice', {
   },
   content: {
     type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  icon: {
+    type: DataTypes.STRING(10),
+    allowNull: true,
+  },
+  published_at: {
+    type: DataTypes.DATE,
     allowNull: true,
   },
 }, {

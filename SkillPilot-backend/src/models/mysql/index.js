@@ -14,6 +14,7 @@ const PortfolioCert = require('./PortfolioCert');
 const PortfolioProject = require('./PortfolioProject');
 const PortfolioLink = require('./PortfolioLink');
 const PortfolioActivity = require('./PortfolioActivity');
+const Job = require('./Job');
 
 // User <-> Profile (1:1)
 User.hasOne(Profile, { foreignKey: 'user_id', as: 'profile' });
@@ -75,4 +76,5 @@ module.exports = {
   PortfolioProject,
   PortfolioLink,
   PortfolioActivity,
+  Job,
 };

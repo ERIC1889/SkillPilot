@@ -1,0 +1,156 @@
+.mock-interview-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.mi-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.mi-header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.mi-back {
+  background: transparent;
+  border: 1px solid #d0d7de;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.mi-setup {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 480px;
+}
+
+.mi-setup label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.mi-setup input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.mi-setup button {
+  background: #3b82f6;
+  color: #fff;
+  border: 0;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.mi-setup button:disabled {
+  opacity: 0.5;
+}
+
+.mi-conversation {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  background: #f9fafb;
+  margin-bottom: 16px;
+  min-height: 400px;
+  max-height: 60vh;
+}
+
+.mi-turn {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.mi-turn strong {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.mi-turn p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.mi-interviewer {
+  border-left: 3px solid #3b82f6;
+}
+
+.mi-candidate {
+  border-left: 3px solid #10b981;
+  background: #ecfdf5;
+}
+
+.mi-feedback {
+  border-left: 3px solid #f59e0b;
+  background: #fffbeb;
+}
+
+.mi-system {
+  text-align: center;
+  color: #6b7280;
+  background: transparent;
+  border: 0;
+}
+
+.mi-loading {
+  color: #6b7280;
+  font-style: italic;
+  padding: 8px;
+}
+
+.mi-input {
+  display: flex;
+  gap: 8px;
+}
+
+.mi-input textarea {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.mi-input button {
+  background: #3b82f6;
+  color: #fff;
+  border: 0;
+  padding: 0 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.mi-input button:disabled {
+  opacity: 0.5;
+}
+
+.mi-error {
+  color: #dc2626;
+  margin-top: 8px;
+}

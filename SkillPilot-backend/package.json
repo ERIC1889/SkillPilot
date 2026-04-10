@@ -7,7 +7,10 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "db:sync": "node src/scripts/syncDb.js",
-    "db:seed": "node src/scripts/seedData.js"
+    "db:seed": "node src/scripts/seedData.js",
+    "sync:certifications": "node src/scripts/syncCertifications.js",
+    "sync:exams": "node src/scripts/syncExamSchedules.js",
+    "generate:questions": "node src/scripts/generateQuestions.js"
   },
   "keywords": [],
   "author": "",
@@ -17,12 +20,14 @@
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "fast-xml-parser": "^4.5.6",
     "helmet": "^8.1.0",
     "joi": "^18.0.2",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.2.3",
     "morgan": "^1.10.1",
     "mysql2": "^3.18.2",
+    "node-cron": "^3.0.3",
     "openai": "^6.25.0",
     "sequelize": "^6.37.7"
   },

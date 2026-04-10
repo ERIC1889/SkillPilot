@@ -1,0 +1,202 @@
+.jm-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.jm-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.jm-header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.jm-back {
+  background: transparent;
+  border: 1px solid #d0d7de;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.jm-loading {
+  text-align: center;
+  padding: 60px;
+  color: #6b7280;
+}
+
+.jm-error {
+  color: #dc2626;
+}
+
+.jm-gap {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.jm-gap h2 {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+}
+
+.jm-score {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f3f4f6;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.jm-score span {
+  font-size: 24px;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+.jm-block {
+  margin-top: 16px;
+}
+
+.jm-block h3 {
+  font-size: 14px;
+  color: #374151;
+  margin: 0 0 8px 0;
+}
+
+.jm-block ul,
+.jm-block ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.jm-block li {
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+.jm-priority {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  margin-left: 8px;
+}
+
+.jm-priority.jm-높음 {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.jm-priority.jm-보통 {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.jm-priority.jm-낮음 {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+.jm-jobs {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.jm-jobs h2 {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+}
+
+.jm-empty {
+  text-align: center;
+  color: #6b7280;
+  padding: 40px;
+}
+
+.jm-job-list {
+  display: grid;
+  gap: 16px;
+}
+
+.jm-job-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.jm-job-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.jm-job-card h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.jm-company {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.jm-desc {
+  color: #374151;
+  font-size: 14px;
+  margin: 8px 0;
+}
+
+.jm-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.jm-match {
+  background: #dcfce7;
+  color: #166534;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.jm-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.jm-skill-chip {
+  background: #eef2ff;
+  color: #4338ca;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+.jm-apply {
+  display: inline-block;
+  background: #3b82f6;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 13px;
+  margin-top: 8px;
+}

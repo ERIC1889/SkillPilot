@@ -1,4 +1,4 @@
-const { Schedule, UserCertification } = require('../models/mysql');
+const { Schedule, UserCertification, Certification } = require('../models/mysql');
 const TestResult = require('../models/mongodb/TestResult');
 const RoadmapData = require('../models/mongodb/RoadmapData');
 const LearningRecord = require('../models/mongodb/LearningRecord');
@@ -47,12 +47,19 @@ const getDashboard = async (userId) => {
   });
   const totalStudyHours = records.reduce((sum, r) => sum + r.studyHours, 0);
 
+  // User's selected certifications with details
+  const userCerts = await UserCertification.findAll({
+    where: { user_id: userId },
+    include: [{ association: 'certification' }],
+  });
+
   return {
     certCount,
     upcomingSchedules,
     recentTests,
     roadmapWeeks: totalWeeks,
     monthlyStudyHours: totalStudyHours,
+    userCerts,
   };
 };
 

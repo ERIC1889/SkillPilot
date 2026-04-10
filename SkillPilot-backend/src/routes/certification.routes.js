@@ -6,6 +6,7 @@ const { select } = require('../validations/certification.validation');
 
 router.get('/recommended', auth, certController.getRecommended);
 router.get('/rankings', certController.getRankings);
+router.get('/filter-options', certController.getFilterOptions);
 router.get('/', certController.getAll);
 router.get('/:id', certController.getById);
 router.post('/select', auth, validate(select), certController.selectCertifications);

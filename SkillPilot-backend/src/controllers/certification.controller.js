@@ -29,4 +29,16 @@ const selectCertifications = asyncHandler(async (req, res) => {
   res.json({ success: true, data: result });
 });
 
-module.exports = { getAll, getById, getRankings, getRecommended, selectCertifications };
+const getFilterOptions = asyncHandler(async (req, res) => {
+  const options = await certService.getFilterOptions();
+  res.json({ success: true, data: options });
+});
+
+module.exports = {
+  getAll,
+  getById,
+  getRankings,
+  getRecommended,
+  selectCertifications,
+  getFilterOptions,
+};
