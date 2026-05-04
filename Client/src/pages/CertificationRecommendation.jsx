@@ -7,6 +7,7 @@ import {
 } from 'react-icons/fi';
 import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { Button, Loading, EmptyState } from '../components/ui';
 import '../styles/signup.css';
 
 // 자격증 분야/키워드에 따라 아이콘 자동 선택
@@ -88,96 +89,105 @@ function CertificationRecommendation() {
   };
 
   return (
-    <div className="signup-wrapper recommendation-page">
-      <div className="profile-header-section">
-        <button type="button" className="back-button" onClick={() => navigate(-1)}>
-          <FiChevronLeft />
+    <main className="signup-wrapper recommendation-page">
+      <header className="profile-header-section">
+        <button type="button" className="back-button" onClick={() => navigate(-1)} aria-label="이전 페이지로 돌아가기">
+          <FiChevronLeft aria-hidden="true" />
         </button>
         <div className="logo-group">
-          <img src="/SPLogo.png" alt="Logo" className="header-logo" />
+          <img src="/SPLogo.png" alt="" aria-hidden="true" className="header-logo" />
           <h1 className="header-brand">AI 추천 자격증 목록</h1>
         </div>
         <p className="header-desc">당신의 프로필과 목표에 맞춘 자격증입니다.</p>
-      </div>
+      </header>
 
-      {loading && (
-        <div style={{ textAlign: 'center', padding: 40, color: '#666' }}>
-          추천 자격증을 불러오는 중...
-        </div>
-      )}
+      {loading && <Loading variant="block" size="lg" label="추천 자격증을 불러오는 중" />}
 
       {!loading && error && (
-        <div style={{ textAlign: 'center', padding: 40, color: '#c0392b' }}>
-          {error}
-        </div>
+        <EmptyState icon="⚠️" title="불러올 수 없습니다" description={error} />
       )}
 
       {!loading && !error && certifications.length > 0 && (
-        <div className="recommend-list">
-          {certifications.map((cert) => (
-            <div
-              key={cert.id}
-              className={`recommend-card ${selectedId === cert.id ? 'active' : ''}`}
-              onClick={() => setSelectedId(selectedId === cert.id ? null : cert.id)}
-            >
-              <div className="card-main-content">
-                <div className="card-top">
-                  <span className="card-icon" style={{ color: cert.color }}>{cert.icon}</span>
-                  <h3 className="card-title">{cert.title}</h3>
-                </div>
-
-                <div className="card-info">
-                  <div className="info-item">
-                    <span className="info-label"><FiBarChart /> 자격구분</span>
-                    <span className="info-value">{cert.level}</span>
-                  </div>
-                  <div className="info-item">
-                    <span className="info-label"><FiClock /> 준비기간</span>
-                    <span className="info-value">{cert.duration}</span>
-                  </div>
-                  {cert.passRate != null && (
-                    <div className="info-item">
-                      <span className="info-label">합격률</span>
-                      <span className="info-value">{Number(cert.passRate).toFixed(1)}%</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="details-expanded">
-                <div className="expanded-divider"></div>
-                <div className="overlay-content">
-                  {cert.jobs && <p><FiBriefcase /> <strong>관련직무:</strong> {cert.jobs}</p>}
-                  {cert.exam && <p><FiCalendar /> <strong>시험정보:</strong> {cert.exam}</p>}
-                  {cert.tips && <p><FiZap /> <strong>준비팁:</strong> {cert.tips}</p>}
-                  {cert.extra && <p><FiPlusCircle /> <strong>추가정보:</strong> {cert.extra}</p>}
-                </div>
-              </div>
-
-              <button
-                className={`card-select-btn ${selectedId === cert.id ? 'selected' : ''}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedId(selectedId === cert.id ? null : cert.id);
+        <div className="recommend-list" role="radiogroup" aria-label="추천 자격증 목록">
+          {certifications.map((cert) => {
+            const isSelected = selectedId === cert.id;
+            return (
+              <div
+                key={cert.id}
+                className={`recommend-card ${isSelected ? 'active' : ''}`}
+                onClick={() => setSelectedId(isSelected ? null : cert.id)}
+                role="radio"
+                aria-checked={isSelected}
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelectedId(isSelected ? null : cert.id);
+                  }
                 }}
               >
-                {selectedId === cert.id ? <><FiCheck /> 선택됨</> : '선택하기'}
-              </button>
-            </div>
-          ))}
+                <div className="card-main-content">
+                  <div className="card-top">
+                    <span className="card-icon" style={{ color: cert.color }} aria-hidden="true">{cert.icon}</span>
+                    <h3 className="card-title">{cert.title}</h3>
+                  </div>
+
+                  <div className="card-info">
+                    <div className="info-item">
+                      <span className="info-label"><FiBarChart aria-hidden="true" /> 자격구분</span>
+                      <span className="info-value">{cert.level}</span>
+                    </div>
+                    <div className="info-item">
+                      <span className="info-label"><FiClock aria-hidden="true" /> 준비기간</span>
+                      <span className="info-value">{cert.duration}</span>
+                    </div>
+                    {cert.passRate != null && (
+                      <div className="info-item">
+                        <span className="info-label">합격률</span>
+                        <span className="info-value">{Number(cert.passRate).toFixed(1)}%</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="details-expanded">
+                  <div className="expanded-divider"></div>
+                  <div className="overlay-content">
+                    {cert.jobs && <p><FiBriefcase aria-hidden="true" /> <strong>관련직무:</strong> {cert.jobs}</p>}
+                    {cert.exam && <p><FiCalendar aria-hidden="true" /> <strong>시험정보:</strong> {cert.exam}</p>}
+                    {cert.tips && <p><FiZap aria-hidden="true" /> <strong>준비팁:</strong> {cert.tips}</p>}
+                    {cert.extra && <p><FiPlusCircle aria-hidden="true" /> <strong>추가정보:</strong> {cert.extra}</p>}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  className={`card-select-btn ${isSelected ? 'selected' : ''}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedId(isSelected ? null : cert.id);
+                  }}
+                  aria-pressed={isSelected}
+                >
+                  {isSelected ? <><FiCheck aria-hidden="true" /> 선택됨</> : '선택하기'}
+                </button>
+              </div>
+            );
+          })}
         </div>
       )}
 
       <div className="recommend-footer">
-        <button
-          className="final-submit-btn"
-          disabled={!selectedId || submitting}
+        <Button
+          size="lg"
+          disabled={!selectedId}
+          loading={submitting}
           onClick={handleSelect}
         >
           {submitting ? '처리 중...' : '선택 완료'}
-        </button>
+        </Button>
       </div>
-    </div>
+    </main>
   );
 }
 

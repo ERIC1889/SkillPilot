@@ -176,7 +176,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #1f2d3d;
+  color: var(--color-primary);
 }
 
 .p-card h3 {
@@ -191,7 +191,7 @@
   gap: 8px;
   border: none;
   background: #f3f6fa;
-  color: #1f2d3d;
+  color: var(--color-primary);
   padding: 10px 14px;
   border-radius: 12px;
   cursor: pointer;
@@ -213,7 +213,7 @@
 
 .p-field .p-value {
   font-size: 15px;
-  color: #1f2d3d;
+  color: var(--color-primary);
   line-height: 1.55;
 }
 
@@ -226,7 +226,7 @@
 
 .chip {
   background: #cfe1f6;
-  color: #1f2d3d;
+  color: var(--color-primary);
   font-weight: 700;
   padding: 10px 14px;
   border-radius: 12px;
@@ -251,12 +251,12 @@
 
 .list-left {
   font-weight: 700;
-  color: #1f2d3d;
+  color: var(--color-primary);
 }
 
 .list-right {
   font-weight: 800;
-  color: #1f2d3d;
+  color: var(--color-primary);
 }
 
 /* project items */
@@ -272,7 +272,7 @@
 
 .project-title {
   font-weight: 800;
-  color: #1f2d3d;
+  color: var(--color-primary);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -284,7 +284,7 @@
   padding: 6px 10px;
   border-radius: 999px;
   background: #cfe1f6;
-  color: #1f2d3d;
+  color: var(--color-primary);
 }
 
 .project-desc {
@@ -320,7 +320,7 @@
 }
 
 .link-value {
-  color: #1f2d3d;
+  color: var(--color-primary);
   font-weight: 800;
 }
 
@@ -367,7 +367,7 @@
 .p-primary {
   border: none;
   background: #cfe1f6;
-  color: #1f2d3d;
+  color: var(--color-primary);
   font-weight: 900;
   padding: 12px 14px;
   border-radius: 12px;
@@ -377,7 +377,7 @@
 .p-ghost {
   border: none;
   background: #e9eef5;
-  color: #1f2d3d;
+  color: var(--color-primary);
   font-weight: 900;
   padding: 12px 14px;
   border-radius: 12px;
@@ -403,7 +403,7 @@
   border-radius: 12px;
   cursor: pointer;
   font-weight: 900;
-  color: #1f2d3d;
+  color: var(--color-primary);
 }
 
 .p-toggle.active {

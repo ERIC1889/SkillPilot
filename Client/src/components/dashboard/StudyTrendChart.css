@@ -1,0 +1,25 @@
+.sp-trend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sp-trend__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.sp-trend__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+.sp-trend__sub {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-subtle);
+  margin-top: 2px;
+}
+.sp-trend__chart {
+  width: 100%;
+}

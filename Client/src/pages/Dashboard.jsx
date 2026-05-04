@@ -4,6 +4,9 @@ import CBT from './CBT';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import api from "../services/api";
+import { Modal, Button, EmptyState, Input } from '../components/ui';
+import { CheerBanner } from '../components/assistant';
+import { StatRow, ProgressDonut, StudyHeatmap, StudyTrendChart } from '../components/dashboard';
 
 // --- Icons ---
 const DiplomaIcon = () => (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2d3e5d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>);
@@ -228,6 +231,10 @@ function Dashboard() {
   };
 
   const monthHours = learningSummary?.monthHours ?? dashboardData?.monthlyStudyHours ?? 0;
+  const weekHours  = learningSummary?.weekHours  ?? 0;
+  const streak     = learningSummary?.streak     ?? 0;
+  const dailySeries = learningSummary?.daily      ?? [];
+
   const myActivityStats = [
     { label: '총 학습 시간', value: `${monthHours}시간`, sub: '이번 달 기준', icon: <ClockIcon /> },
     { label: '취득 자격증', value: dashboardData?.certCount ? `${dashboardData.certCount}개` : '0개', sub: '준비중 포함', icon: <DiplomaIcon /> },
@@ -326,6 +333,30 @@ function Dashboard() {
     ? Math.round((completedWeekCount / roadmapWeeks.length) * 100)
     : 0;
 
+  // 헤로 통계 카드 4종 — 모두 동일한 navy 톤
+  const heroStats = [
+    {
+      value: `${streak}일`,
+      label: '연속 학습',
+      sub: streak > 0 ? '오늘도 이어가요!' : '오늘부터 시작!',
+    },
+    {
+      value: `${weekHours}h`,
+      label: '이번 주 학습',
+      sub: '최근 7일 기준',
+    },
+    {
+      value: `${roadmapWeeks.length > 0 ? roadmapProgress : 0}%`,
+      label: '로드맵 진행',
+      sub: roadmapWeeks.length > 0 ? `${completedWeekCount}/${roadmapWeeks.length}주차` : '로드맵을 만들어요',
+    },
+    {
+      value: `${dashboardData?.certCount ?? 0}개`,
+      label: '도전 자격증',
+      sub: certTitle !== '자격증 미선택' ? certTitle : '자격증을 선택해요',
+    },
+  ];
+
   // 학습 기록 저장
   const saveLearningRecord = async () => {
     try {
@@ -361,122 +392,167 @@ function Dashboard() {
   return (
     <div className="dashboard-wrapper">
       <header className="dashboard-header">
-        <div className="brand" onClick={() => handlePageChange('dashboard')} style={{cursor: 'pointer'}}>
-          <img src="/SPLogo.png" alt="logo" onError={(e) => e.target.style.display='none'} />
+        <button
+          type="button"
+          className="brand"
+          onClick={() => handlePageChange('dashboard')}
+          style={{ cursor: 'pointer', background: 'transparent', border: 'none', padding: 0 }}
+          aria-label="대시보드 홈으로 이동"
+        >
+          <img src="/SPLogo.png" alt="" onError={(e) => e.target.style.display='none'} />
           <span>SkillPilot 대시보드</span>
-        </div>
-        <button className="menu-btn" onClick={toggleSidebar}>☰</button>
+        </button>
+        <button
+          type="button"
+          className="menu-btn"
+          onClick={toggleSidebar}
+          aria-label="메뉴 열기"
+          aria-expanded={isSidebarOpen}
+          aria-controls="sp-sidebar"
+        >
+          ☰
+        </button>
       </header>
 
-      <div className={`sidebar-overlay ${isSidebarOpen ? 'open' : ''}`} onClick={toggleSidebar}></div>
-      <aside className={`sidebar-container ${isSidebarOpen ? 'open' : ''}`}>
+      <div
+        className={`sidebar-overlay ${isSidebarOpen ? 'open' : ''}`}
+        onClick={toggleSidebar}
+        aria-hidden="true"
+      ></div>
+      <aside
+        id="sp-sidebar"
+        className={`sidebar-container ${isSidebarOpen ? 'open' : ''}`}
+        aria-label="주 메뉴"
+        aria-hidden={!isSidebarOpen}
+      >
         <div className="sidebar-header">
           <h2>메뉴</h2>
-          <button className="close-btn" onClick={toggleSidebar}><CloseIcon /></button>
+          <button type="button" className="close-btn" onClick={toggleSidebar} aria-label="메뉴 닫기">
+            <CloseIcon />
+          </button>
         </div>
-        <nav className="sidebar-menu">
-          <button className={`sidebar-item ${currentTab === 'dashboard' ? 'active' : ''}`} onClick={() => handlePageChange('dashboard')}><HomeIcon /> 대시보드</button>
-          <button className={`sidebar-item ${currentTab === 'schedule' ? 'active' : ''}`} onClick={() => handlePageChange('schedule')}><CalendarIcon /> 일정 관리</button>
-          <button className={`sidebar-item ${currentTab === 'info' ? 'active' : ''}`} onClick={() => handlePageChange('info')}><DocIcon /> 정보 제공</button>
-          <button className={`sidebar-item ${currentTab === 'search' ? 'active' : ''}`} onClick={() => handlePageChange('search')}><SearchIcon /> 자격증 탐색</button>
-          <button className="sidebar-item" onClick={() => navigate('/mock-interview')}><TrophyIcon /> AI 모의면접</button>
-          <button className="sidebar-item" onClick={() => navigate('/job-matching')}><SearchIcon /> 채용 매칭</button>
-          <button className={`sidebar-item ${currentTab === 'mypage' ? 'active' : ''}`} onClick={() => handlePageChange('mypage')}><UserIcon /> 마이페이지</button>
+        <nav className="sidebar-menu" aria-label="페이지 이동">
+          <button type="button" className={`sidebar-item ${currentTab === 'dashboard' ? 'active' : ''}`} aria-current={currentTab === 'dashboard' ? 'page' : undefined} onClick={() => handlePageChange('dashboard')}><HomeIcon /> 대시보드</button>
+          <button type="button" className={`sidebar-item ${currentTab === 'schedule' ? 'active' : ''}`} aria-current={currentTab === 'schedule' ? 'page' : undefined} onClick={() => handlePageChange('schedule')}><CalendarIcon /> 일정 관리</button>
+          <button type="button" className={`sidebar-item ${currentTab === 'info' ? 'active' : ''}`} aria-current={currentTab === 'info' ? 'page' : undefined} onClick={() => handlePageChange('info')}><DocIcon /> 정보 제공</button>
+          <button type="button" className={`sidebar-item ${currentTab === 'search' ? 'active' : ''}`} aria-current={currentTab === 'search' ? 'page' : undefined} onClick={() => handlePageChange('search')}><SearchIcon /> 자격증 탐색</button>
+          <button type="button" className="sidebar-item" onClick={() => navigate('/mock-interview')}><TrophyIcon /> AI 모의면접</button>
+          <button type="button" className="sidebar-item" onClick={() => navigate('/job-matching')}><SearchIcon /> 채용 매칭</button>
+          <button type="button" className={`sidebar-item ${currentTab === 'mypage' ? 'active' : ''}`} aria-current={currentTab === 'mypage' ? 'page' : undefined} onClick={() => handlePageChange('mypage')}><UserIcon /> 마이페이지</button>
         </nav>
       </aside>
 
-      {isCertModalOpen && (
-        <div className="modal-overlay" onClick={toggleCertModal}>
-          <div className="cert-modal-container" onClick={e => e.stopPropagation()}>
-            <div className="modal-header"><h2>{certTitle}</h2><button className="close-btn" onClick={toggleCertModal}><CloseIcon /></button></div>
-            <div className="modal-body-content">
-              <div className="info-group"><p className="info-label">자격증명</p><p className="info-value">{certTitle}</p></div>
-              <div className="info-group"><p className="info-label">난이도</p><p className="info-value">{mainCert?.level || '-'}</p></div>
-              <div className="info-group"><p className="info-label">준비기간</p><p className="info-value">{certDuration}</p></div>
-              <div className="info-group">
-                <p className="info-label">관련 직무</p>
-                <div className="job-tags">{certJobs.length > 0 ? certJobs.map((j, i) => <span key={i} className="job-tag">{j}</span>) : <span className="info-value">-</span>}</div>
-              </div>
-              {certExamInfo && <div className="info-group"><p className="info-label">시험 정보</p><p className="info-value">{certExamInfo}</p></div>}
-              {certTips.length > 0 && (
-                <div className="info-group">
-                  <p className="info-label">준비 팁</p>
-                  <ul className="tip-list">{certTips.map((tip, i) => <li key={i}>{tip}</li>)}</ul>
-                </div>
-              )}
-            </div>
+      <Modal
+        open={isCertModalOpen}
+        onClose={toggleCertModal}
+        title={certTitle}
+        size="md"
+      >
+        <div className="modal-body-content">
+          <div className="info-group"><p className="info-label">자격증명</p><p className="info-value">{certTitle}</p></div>
+          <div className="info-group"><p className="info-label">난이도</p><p className="info-value">{mainCert?.level || '-'}</p></div>
+          <div className="info-group"><p className="info-label">준비기간</p><p className="info-value">{certDuration}</p></div>
+          <div className="info-group">
+            <p className="info-label">관련 직무</p>
+            <div className="job-tags">{certJobs.length > 0 ? certJobs.map((j, i) => <span key={i} className="job-tag">{j}</span>) : <span className="info-value">-</span>}</div>
           </div>
+          {certExamInfo && <div className="info-group"><p className="info-label">시험 정보</p><p className="info-value">{certExamInfo}</p></div>}
+          {certTips.length > 0 && (
+            <div className="info-group">
+              <p className="info-label">준비 팁</p>
+              <ul className="tip-list">{certTips.map((tip, i) => <li key={i}>{tip}</li>)}</ul>
+            </div>
+          )}
         </div>
-      )}
+      </Modal>
 
-      {isLearningModalOpen && (
-        <div className="modal-overlay" onClick={() => setIsLearningModalOpen(false)}>
-          <div className="edit-form-card" onClick={(e) => e.stopPropagation()}>
-            <h3 style={{ marginTop: 0 }}>학습 기록 추가</h3>
-            <div className="form-group">
-              <label>학습 날짜</label>
-              <input
-                type="date"
-                value={learningForm.date}
-                onChange={(e) => setLearningForm({ ...learningForm, date: e.target.value })}
-              />
-            </div>
-            <div className="form-group">
-              <label>학습 시간 (시간)</label>
-              <input
-                type="number"
-                step="0.5"
-                min="0"
-                value={learningForm.studyHours}
-                onChange={(e) => setLearningForm({ ...learningForm, studyHours: e.target.value })}
-              />
-            </div>
-            <div className="form-group">
-              <label>학습 주제 (쉼표로 구분)</label>
-              <input
-                type="text"
-                placeholder="예) SQL 기초, 정규화"
-                value={learningForm.topics}
-                onChange={(e) => setLearningForm({ ...learningForm, topics: e.target.value })}
-              />
-            </div>
-            <div className="form-group">
-              <label>메모</label>
-              <input
-                type="text"
-                value={learningForm.notes}
-                onChange={(e) => setLearningForm({ ...learningForm, notes: e.target.value })}
-              />
-            </div>
-            <div className="form-actions">
-              <button className="cancel-form-btn" onClick={() => setIsLearningModalOpen(false)}>취소</button>
-              <button className="save-form-btn" onClick={saveLearningRecord}>저장</button>
-            </div>
-          </div>
+      <Modal
+        open={isLearningModalOpen}
+        onClose={() => setIsLearningModalOpen(false)}
+        title="학습 기록 추가"
+        size="md"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setIsLearningModalOpen(false)}>취소</Button>
+            <Button variant="primary" onClick={saveLearningRecord}>저장</Button>
+          </>
+        }
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <Input
+            label="학습 날짜"
+            type="date"
+            value={learningForm.date}
+            onChange={(e) => setLearningForm({ ...learningForm, date: e.target.value })}
+          />
+          <Input
+            label="학습 시간 (시간)"
+            type="number"
+            step="0.5"
+            min="0"
+            value={learningForm.studyHours}
+            onChange={(e) => setLearningForm({ ...learningForm, studyHours: e.target.value })}
+          />
+          <Input
+            label="학습 주제 (쉼표로 구분)"
+            type="text"
+            placeholder="예) SQL 기초, 정규화"
+            value={learningForm.topics}
+            onChange={(e) => setLearningForm({ ...learningForm, topics: e.target.value })}
+          />
+          <Input
+            label="메모"
+            type="text"
+            value={learningForm.notes}
+            onChange={(e) => setLearningForm({ ...learningForm, notes: e.target.value })}
+          />
         </div>
-      )}
+      </Modal>
 
-      {isEditModalOpen && (
-        <div className="modal-overlay" onClick={handleEditClose}>
-          <div className="edit-form-card" onClick={e => e.stopPropagation()}>
-            <div className="form-date-row">
-              <div className="form-group date-group"><label>년도</label><input type="text" name="year" value={editFormData.year} onChange={handleFormChange} /></div>
-              <div className="form-group date-group"><label>월</label><input type="text" name="month" value={editFormData.month} onChange={handleFormChange} /></div>
-              <div className="form-group date-group"><label>일</label><input type="text" name="day" value={editFormData.day} onChange={handleFormChange} /></div>
+      <Modal
+        open={isEditModalOpen}
+        onClose={handleEditClose}
+        title={editingId ? '일정 수정' : '일정 추가'}
+        size="md"
+        footer={
+          <>
+            <Button variant="ghost" onClick={handleEditClose}>취소</Button>
+            <Button variant="primary" onClick={handleEditSave}>저장</Button>
+          </>
+        }
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          <div className="form-date-row" style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            <Input label="년도" name="year" value={editFormData.year} onChange={handleFormChange} />
+            <Input label="월"   name="month" value={editFormData.month} onChange={handleFormChange} />
+            <Input label="일"   name="day" value={editFormData.day} onChange={handleFormChange} />
+          </div>
+          <Input label="학습 목표"   name="goal"     value={editFormData.goal}     onChange={handleFormChange} />
+          <Input label="학습 분량"   name="amount"   value={editFormData.amount}   onChange={handleFormChange} />
+          <Input label="예정된 시험/강의" name="schedule" value={editFormData.schedule} onChange={handleFormChange} />
+          <div>
+            <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--color-text-muted)', margin: '0 0 8px' }}>완료 여부</p>
+            <div className="status-toggle-group">
+              <button
+                type="button"
+                className={`status-btn ${editFormData.status === 'incomplete' ? 'active-incomplete' : ''}`}
+                aria-pressed={editFormData.status === 'incomplete'}
+                onClick={() => setEditFormData({ ...editFormData, status: 'incomplete' })}
+              >
+                미완료
+              </button>
+              <button
+                type="button"
+                className={`status-btn ${editFormData.status === 'complete' ? 'active-complete' : ''}`}
+                aria-pressed={editFormData.status === 'complete'}
+                onClick={() => setEditFormData({ ...editFormData, status: 'complete' })}
+              >
+                완료
+              </button>
             </div>
-            <div className="form-group"><label>학습 목표</label><input type="text" name="goal" value={editFormData.goal} onChange={handleFormChange} /></div>
-            <div className="form-group"><label>학습 분량</label><input type="text" name="amount" value={editFormData.amount} onChange={handleFormChange} /></div>
-            <div className="form-group"><label>예정된 시험/강의</label><input type="text" name="schedule" value={editFormData.schedule} onChange={handleFormChange} /></div>
-            <div className="form-group"><label>완료 여부</label>
-              <div className="status-toggle-group">
-                <button className={`status-btn ${editFormData.status === 'incomplete' ? 'active-incomplete' : ''}`} onClick={() => setEditFormData({...editFormData, status: 'incomplete'})}>미완료</button>
-                <button className={`status-btn ${editFormData.status === 'complete' ? 'active-complete' : ''}`} onClick={() => setEditFormData({...editFormData, status: 'complete'})}>완료</button>
-              </div>
-            </div>
-            <div className="form-actions"><button className="cancel-form-btn" onClick={handleEditClose}>취소</button><button className="save-form-btn" onClick={handleEditSave}>저장</button></div>
           </div>
         </div>
-      )}
+      </Modal>
 
       <main className="dashboard-main-content">
         {currentTab === 'dashboard' && (
@@ -485,6 +561,11 @@ function Dashboard() {
               <div className="welcome-text"><h2>안녕하세요, {userName}님! 👋</h2><p>오늘도 목표를 향해 한 걸음 나아가볼까요?</p></div>
               <button className="dark-btn" onClick={() => navigate("/portfolio")}>내 포트폴리오로 이동</button>
             </section>
+
+            <StatRow stats={heroStats} />
+
+            <CheerBanner intervalMs={7000} />
+
 
             <section className="dashboard-card cert-card">
               <div className="card-left"><div className="icon-box blue-bg"><DiplomaIcon /></div><div><h3>{certTitle}{mainCert ? '' : ''}</h3><p className="sub-text">{certExamInfo || (mainCert ? `준비기간: ${certDuration}` : '자격증을 선택해주세요')}</p></div></div>
@@ -511,9 +592,18 @@ function Dashboard() {
                     </>
                   )}
                 </div>
-                <div className="progress-section">
-                  <div className="progress-info"><span>전체 진행률</span><span className="percent">{roadmapWeeks.length > 0 ? `${roadmapProgress}%` : '0%'}</span></div>
-                  <div className="progress-bar-bg"><div className="progress-bar-fill" style={{ width: `${roadmapWeeks.length > 0 ? roadmapProgress : 0}%` }}></div></div>
+                <div className="progress-section progress-section--donut">
+                  <ProgressDonut
+                    value={roadmapWeeks.length > 0 ? roadmapProgress : 0}
+                    size={140}
+                    stroke={12}
+                    label="전체 진행률"
+                  />
+                  <div className="progress-section__hint">
+                    {roadmapWeeks.length > 0
+                      ? `${completedWeekCount} / ${roadmapWeeks.length}주차 완료`
+                      : '로드맵을 만들어주세요'}
+                  </div>
                 </div>
                 <div className="other-certs">
                   <p>다른 자격증 검색</p>
@@ -566,14 +656,23 @@ function Dashboard() {
               </section>
             </div>
 
-            <section className="dashboard-card">
-              <div className="card-header"><ClockIcon /><h3>학습 기록</h3></div>
-              <p className="sub-text">
-                이번 주 {learningSummary?.weekHours || 0}시간 · 이번 달 {learningSummary?.monthHours || 0}시간
+            <section className="dashboard-card learning-card">
+              <div className="learning-card__head">
+                <div className="card-header" style={{ marginBottom: 0 }}>
+                  <ClockIcon />
+                  <h3>학습 기록</h3>
+                </div>
+                <button className="dark-btn" onClick={() => setIsLearningModalOpen(true)}>
+                  오늘 학습 기록 추가
+                </button>
+              </div>
+              <p className="sub-text" style={{ marginBottom: 16 }}>
+                이번 주 {weekHours}시간 · 이번 달 {monthHours}시간 · 연속 {streak}일
               </p>
-              <button className="dark-btn" style={{ marginTop: 12 }} onClick={() => setIsLearningModalOpen(true)}>
-                오늘 학습 기록 추가
-              </button>
+              <StudyTrendChart daily={dailySeries} days={14} />
+              <div style={{ marginTop: 24 }}>
+                <StudyHeatmap daily={dailySeries} weeks={12} />
+              </div>
             </section>
           </div>
         )}
@@ -617,7 +716,13 @@ function Dashboard() {
                     <button className="dark-btn" onClick={handleAddSchedule} style={{padding: '8px 16px', fontSize: '14px'}}>일정 추가</button>
                   </div>
                   <div className="schedule-list-container">
-                    {scheduleListData.length === 0 && <p style={{textAlign: 'center', color: '#999', padding: '24px'}}>등록된 일정이 없습니다.</p>}
+                    {scheduleListData.length === 0 && (
+                      <EmptyState
+                        icon="📅"
+                        title="등록된 일정이 없습니다"
+                        description="‘일정 추가’ 버튼을 눌러 첫 학습 일정을 등록해 보세요."
+                      />
+                    )}
                     {scheduleListData.map((item, index) => (
                       <div className="schedule-list-item clickable" key={index} onClick={() => handleEditClick(item)}>
                         <div className="list-date-box"><span className="small-year">{item.fullDate}</span><span className="big-date">{item.date}</span></div>
@@ -646,7 +751,7 @@ function Dashboard() {
               <h3 className="section-title">공지사항 및 새소식</h3>
               <div className="notice-list">
                 {notices.length === 0 && (
-                  <p style={{ color: '#999', padding: 16 }}>등록된 공지가 없습니다.</p>
+                  <EmptyState icon="📢" title="등록된 공지가 없습니다" />
                 )}
                 {notices.map((notice) => (
                   <div key={notice.id} className="notice-item">
@@ -664,7 +769,7 @@ function Dashboard() {
               <h3 className="section-title">자격증 학습 팁</h3>
               <div className="study-tips-list">
                 {tips.length === 0 && (
-                  <p style={{ color: '#999', padding: 16 }}>등록된 학습 팁이 없습니다.</p>
+                  <EmptyState icon="💡" title="등록된 학습 팁이 없습니다" />
                 )}
                 {tips.map((tip) => (
                   <div key={tip.id} className="tip-card">
@@ -706,7 +811,13 @@ function Dashboard() {
               <div className="recommended-section">
                 <h3 className="section-title-sm">추천 자격증</h3>
                 <div className="cert-grid-2col">
-                  {filteredCerts.length === 0 && <p style={{color: '#999', padding: '16px'}}>조건에 맞는 자격증이 없습니다.</p>}
+                  {filteredCerts.length === 0 && (
+                    <EmptyState
+                      icon="🔍"
+                      title="조건에 맞는 자격증이 없습니다"
+                      description="필터를 다시 조정해 보세요."
+                    />
+                  )}
                   {filteredCerts.map((cert, i) => (
                     <div key={cert.id || i} className="dashboard-card cert-item-card">
                       <div className="cert-card-header">

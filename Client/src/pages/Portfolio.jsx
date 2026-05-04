@@ -14,6 +14,7 @@ import "../styles/portfolio.css";
 import SPLogo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import { Button } from "../components/ui";
 
 export default function Portfolio() {
   const navigate = useNavigate();
@@ -327,9 +328,9 @@ export default function Portfolio() {
       </div>
 
       <div className="portfolio-footer">
-        <button className="create-btn" onClick={() => navigate("/portfolio/preview")}>
+        <Button size="lg" onClick={() => navigate("/portfolio/preview")}>
           포트폴리오 만들기
-        </button>
+        </Button>
         <p>완성된 포트폴리오를 다운로드하거나 링크로 공유할 수 있습니다</p>
       </div>
     </div>

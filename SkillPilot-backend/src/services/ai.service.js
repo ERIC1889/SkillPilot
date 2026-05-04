@@ -11,10 +11,11 @@ const cleanJSON = (text) => {
   return cleaned.trim();
 };
 
-const callGPT = async (messages) => {
+const callGPT = async (messages, options = {}) => {
   const response = await openai.chat.completions.create({
     model: config.openai.model,
     messages,
+    ...options,
   });
 
   const raw = response.choices[0].message.content;
@@ -311,6 +312,55 @@ const analyzeSkillGap = async ({ targetRole, currentSkills, certifications, proj
   }
 };
 
+/**
+ * 학습 메이트 챗봇 — 사용자 자유 입력에 1~3문장으로 응답.
+ * JSON 파싱 없이 plain text 응답.
+ */
+const ASSISTANT_SYSTEM_PROMPT = `당신은 SkillPilot의 "학습 메이트"입니다.
+- IT 자격증 시험을 준비하는 학습자 옆에서 따뜻하지만 솔직하게 코칭합니다.
+- 너무 길게 말하지 않습니다. 한국어로 1~3문장, 200자 이내로 답하세요.
+- 칭찬과 잔소리를 적절히 섞고, 행동 가능한 한 가지 제안을 포함하세요.
+- 모르는 것은 모른다고 하고, 학습 외 잡담에는 가볍게 받아주되 다시 학습으로 유도합니다.
+- 마크다운/코드블록을 쓰지 말고 자연스러운 문장으로만 답하세요.
+- 이모지는 한 답변당 0~1개로 절제해서 사용합니다.`;
+
+const chatTurn = async ({ history = [], message }) => {
+  const trimmedHistory = (Array.isArray(history) ? history : [])
+    .slice(-10) // 최근 10턴만 컨텍스트로
+    .filter((m) => m && typeof m.text === 'string')
+    .map((m) => ({
+      role: m.from === 'user' ? 'user' : 'assistant',
+      content: String(m.text).slice(0, 500),
+    }));
+
+  const messages = [
+    { role: 'system', content: ASSISTANT_SYSTEM_PROMPT },
+    ...trimmedHistory,
+    { role: 'user', content: String(message || '').slice(0, 500) },
+  ];
+
+  // 신모델(o1/o3/gpt-4.1 계열)은 max_completion_tokens 만 지원, 구모델은 max_tokens 만 지원.
+  // 1차 시도가 400 으로 떨어지면 다른 키로 즉시 재시도해 호환성 확보.
+  let result;
+  try {
+    result = await callGPT(messages, {
+      max_completion_tokens: 220,
+    });
+  } catch (err) {
+    const msg = err?.message || '';
+    if (err?.status === 400 && /max_completion_tokens|max_tokens/.test(msg)) {
+      result = await callGPT(messages, {
+        max_tokens: 220,
+      });
+    } else {
+      throw err;
+    }
+  }
+
+  // plain text — cleanJSON 이 trim 만 해도 무난
+  return { reply: result.content || '', tokensUsed: result.tokensUsed };
+};
+
 module.exports = {
   recommendCertifications,
   generateRoadmap,
@@ -319,4 +369,5 @@ module.exports = {
   generateQuestions,
   mockInterviewTurn,
   analyzeSkillGap,
+  chatTurn,
 };

@@ -16,7 +16,7 @@
   margin: 0 auto;
 }
 .dashboard-bg {
-  background: #f5f8fc;
+  background: var(--color-bg-app);
   min-height: 100vh;
   width: 100%;
 }
@@ -34,7 +34,7 @@
   gap: 10px;
   font-weight: 700;
   font-size: 20px;
-  color: #2d3e5d;
+  color: var(--color-primary);
 }
 
 .brand img {
@@ -44,8 +44,8 @@
 
 .menu-btn {
   border: none;
-  background: #e5effa;
-  color: #2d3e5d;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   border-radius: 8px;
   width: 40px;
   height: 40px;
@@ -69,12 +69,12 @@
 
 /* 타이포그래피 */
 h2 { font-size: 22px; margin: 0 0 8px 0; font-weight: 700; color: #333; }
-h3 { font-size: 18px; margin: 0; font-weight: 700; color: #2d3e5d; }
+h3 { font-size: 18px; margin: 0; font-weight: 700; color: var(--color-primary); }
 p { margin: 0; color: #666; font-size: 14px; }
 
 /* 버튼 스타일 */
 .dark-btn {
-  background: #2d3e5d;
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 12px 20px;
@@ -86,8 +86,8 @@ p { margin: 0; color: #666; font-size: 14px; }
 }
 
 .light-btn {
-  background: #e5effa;
-  color: #2d3e5d;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
   border: none;
   padding: 10px 16px;
   border-radius: 10px;
@@ -129,10 +129,10 @@ p { margin: 0; color: #666; font-size: 14px; }
   justify-content: center;
 }
 
-.blue-bg { background: #dbeafe; }
+.blue-bg { background: var(--color-accent-soft); }
 
 .d-day {
-  color: #ef4444;
+  color: var(--color-danger);
   font-weight: 600;
   margin-left: 8px;
   font-size: 16px;
@@ -158,7 +158,7 @@ p { margin: 0; color: #666; font-size: 14px; }
   align-items: center;
   gap: 8px;
   margin-bottom: 20px;
-  color: #2d3e5d;
+  color: var(--color-primary);
 }
 
 /* 로드맵 스타일 */
@@ -187,9 +187,9 @@ p { margin: 0; color: #666; font-size: 14px; }
 }
 
 .roadmap-item.active {
-  background: #e5effa;
+  background: var(--color-primary-soft);
   border-color: #bad6f5;
-  color: #2d3e5d;
+  color: var(--color-primary);
   font-weight: 700;
   position: relative;
 }
@@ -214,14 +214,14 @@ p { margin: 0; color: #666; font-size: 14px; }
 }
 
 .active .check-icon.active-check {
-  border-color: #ef4444;
-  color: #ef4444;
+  border-color: var(--color-danger);
+  color: var(--color-danger);
 }
 
 .status-badge {
   margin-left: auto;
   background: white;
-  color: #2d3e5d;
+  color: var(--color-primary);
   font-size: 11px;
   padding: 4px 8px;
   border-radius: 20px;
@@ -245,7 +245,7 @@ p { margin: 0; color: #666; font-size: 14px; }
 }
 .progress-bar-fill {
   height: 100%;
-  background: #2d3e5d;
+  background: var(--color-primary);
   border-radius: 4px;
 }
 
@@ -285,8 +285,8 @@ p { margin: 0; color: #666; font-size: 14px; }
   transition: all 0.2s;
 }
 .date-cell.empty { cursor: default; }
-.date-cell.done { background: #2d3e5d; color: white; font-weight: 600; }
-.date-cell.scheduled { background: #dbeafe; color: #1e40af; font-weight: 600; }
+.date-cell.done { background: var(--color-primary); color: white; font-weight: 600; }
+.date-cell.scheduled { background: var(--color-accent-soft); color: var(--color-accent-strong); font-weight: 600; }
 
 /* 캘린더 호버 팝업 */
 .hover-popup {
@@ -308,8 +308,8 @@ p { margin: 0; color: #666; font-size: 14px; }
 .popup-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 .popup-date { font-size: 16px; font-weight: 700; color: #333; }
 .popup-badge { font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 600; }
-.badge-done { background: #2d3e5d; color: white; }
-.badge-scheduled { background: #dbeafe; color: #2d3e5d; }
+.badge-done { background: var(--color-primary); color: white; }
+.badge-scheduled { background: var(--color-accent-soft); color: var(--color-primary); }
 .popup-body { display: flex; flex-direction: column; gap: 10px; }
 .popup-item { display: flex; flex-direction: column; gap: 2px; }
 .popup-label { font-size: 11px; color: #888; margin: 0; }
@@ -359,9 +359,9 @@ p { margin: 0; color: #666; font-size: 14px; }
 }
 .sidebar-item:hover { background: #f9fafb; }
 .sidebar-item.active {
-  background: #dbeafe; color: #1e3a8a; border-color: #dbeafe; font-weight: 600;
+  background: var(--color-accent-soft); color: var(--color-accent-deep); border-color: var(--color-accent-soft); font-weight: 600;
 }
-.sidebar-item.active svg { color: #1e3a8a; stroke-width: 2.5px; }
+.sidebar-item.active svg { color: var(--color-accent-deep); stroke-width: 2.5px; }
 
 /* =========================================
    5. 모달 스타일 (자격증 상세)
@@ -388,7 +388,7 @@ p { margin: 0; color: #666; font-size: 14px; }
 
 .job-tags { display: flex; gap: 8px; flex-wrap: wrap; }
 .job-tag {
-  background: #dbeafe; color: #1e40af;
+  background: var(--color-accent-soft); color: var(--color-accent-strong);
   padding: 6px 14px; border-radius: 20px;
   font-size: 13px; font-weight: 600;
 }
@@ -411,7 +411,7 @@ p { margin: 0; color: #666; font-size: 14px; }
 }
 .toggle-btn:hover { background: #f9fafb; }
 .toggle-btn.active {
-  background: #bfdbfe; border-color: #bfdbfe; color: #1e3a8a;
+  background: var(--color-accent-soft-border); border-color: var(--color-accent-soft-border); color: var(--color-accent-deep);
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
@@ -459,7 +459,7 @@ p { margin: 0; color: #666; font-size: 14px; }
   font-size: 13px; font-weight: 600;
   display: flex; align-items: center; gap: 4px;
 }
-.status-pill.done { background: #bfdbfe; color: #1e40af; }
+.status-pill.done { background: var(--color-accent-soft-border); color: var(--color-accent-strong); }
 .status-pill.scheduled { background: #e5e7eb; color: #6b7280; }
 
 /* 일정 수정 모달 */
@@ -476,7 +476,7 @@ p { margin: 0; color: #666; font-size: 14px; }
   border-radius: 8px; font-size: 16px; color: #333; outline: none; transition: border-color 0.2s;
   box-sizing: border-box; /* 추가: padding 때문에 width 넘치는 현상 방지 */
 }
-.form-group input:focus { border-color: #2d3e5d; }
+.form-group input:focus { border-color: var(--color-primary); }
 .form-date-row { display: flex; gap: 16px; flex-wrap: wrap; /* 추가: 모바일에서 줄바꿈되도록 */ }
 .date-group { flex: 1; min-width: 150px; /* 추가 */ }
 
@@ -488,7 +488,7 @@ p { margin: 0; color: #666; font-size: 14px; }
   cursor: pointer; border: none; transition: all 0.2s;
 }
 .status-btn.active-incomplete { background-color: #e5e7eb; color: #4b5563; border: 1px solid #d1d5db; }
-.status-btn.active-complete { background-color: #bfdbfe; color: #1e40af; border: 1px solid #93c5fd; }
+.status-btn.active-complete { background-color: var(--color-accent-soft-border); color: var(--color-accent-strong); border: 1px solid #93c5fd; }
 .status-btn:not(.active-incomplete):not(.active-complete) { background-color: #f3f4f6; color: #9ca3af; }
 
 .form-actions { display: flex; gap: 16px; margin-top: 10px; }
@@ -497,9 +497,9 @@ p { margin: 0; color: #666; font-size: 14px; }
   font-size: 16px; font-weight: 600; cursor: pointer;
 }
 .cancel-form-btn { background-color: #e5e7eb; color: #4b5563; }
-.save-form-btn { background-color: #2d3e5d; color: white; }
+.save-form-btn { background-color: var(--color-primary); color: white; }
 .cancel-form-btn:hover { background-color: #d1d5db; }
-.save-form-btn:hover { background-color: #1e293b; }
+.save-form-btn:hover { background-color: var(--color-primary-hover); }
 
 /* =========================================
    7. 정보 제공 페이지 (Info)
@@ -510,7 +510,7 @@ p { margin: 0; color: #666; font-size: 14px; }
 
 .page-title {
   font-size: 24px;
-  color: #2d3e5d;
+  color: var(--color-primary);
   margin: 0 0 24px 0;
   font-weight: 700;
 }
@@ -520,7 +520,7 @@ p { margin: 0; color: #666; font-size: 14px; }
   margin-bottom: 20px;
   color: #1f2937;
   font-weight: 700;
-  border-left: 4px solid #2d3e5d;
+  border-left: 4px solid var(--color-primary);
   padding-left: 12px;
 }
 
@@ -564,7 +564,7 @@ p { margin: 0; color: #666; font-size: 14px; }
   white-space: nowrap;
 }
 
-.tag-blue { background-color: #3b82f6; }
+.tag-blue { background-color: var(--color-accent); }
 .tag-gray { background-color: #9ca3af; }
 
 .notice-date {
@@ -684,7 +684,7 @@ p { margin: 0; color: #666; font-size: 14px; }
   align-items: center;
   gap: 8px;
   margin-bottom: 20px;
-  color: #2d3e5d;
+  color: var(--color-primary);
 }
 
 .filter-row {
@@ -727,9 +727,9 @@ p { margin: 0; color: #666; font-size: 14px; }
 }
 
 .filter-btn.active {
-  background: #2d3e5d;
+  background: var(--color-primary);
   color: white;
-  border-color: #2d3e5d;
+  border-color: var(--color-primary);
   font-weight: 600;
 }
 
@@ -743,7 +743,7 @@ p { margin: 0; color: #666; font-size: 14px; }
 .section-title-sm {
   margin: 0 0 16px 0;
   font-size: 18px;
-  color: #2d3e5d;
+  color: var(--color-primary);
   font-weight: 700;
 }
 
@@ -826,7 +826,7 @@ p { margin: 0; color: #666; font-size: 14px; }
 
 .stat-bar-fill {
   height: 100%;
-  background: #3b82f6;
+  background: var(--color-accent);
   border-radius: 3px;
 }
 
@@ -863,7 +863,7 @@ p { margin: 0; color: #666; font-size: 14px; }
 .rank-circle {
   width: 28px;
   height: 28px;
-  background: #2d3e5d;
+  background: var(--color-primary);
   color: white;
   border-radius: 50%;
   display: flex;
@@ -873,7 +873,7 @@ p { margin: 0; color: #666; font-size: 14px; }
   font-size: 12px;
 }
 
-.ranking-item:nth-child(1) .rank-circle { background: #fbbf24; } /* 금 */
+.ranking-item:nth-child(1) .rank-circle { background: var(--color-warning); } /* 금 */
 .ranking-item:nth-child(2) .rank-circle { background: #9ca3af; } /* 은 */
 .ranking-item:nth-child(3) .rank-circle { background: #b45309; } /* 동 */
 
@@ -884,10 +884,10 @@ p { margin: 0; color: #666; font-size: 14px; }
 }
 
 .rank-growth {
-  color: #ef4444;
+  color: var(--color-danger);
   font-size: 12px;
   font-weight: 700;
-  background: #fee2e2;
+  background: var(--color-danger-soft);
   padding: 2px 6px;
   border-radius: 4px;
 }
@@ -938,10 +938,10 @@ p { margin: 0; color: #666; font-size: 14px; }
 .profile-avatar-section { display: flex; align-items: center; gap: 20px; }
 .avatar-circle {
   width: 80px; height: 80px; border-radius: 50%;
-  background-color: #dbeafe; display: flex; align-items: center; justify-content: center;
-  font-size: 32px; color: #1e40af; flex-shrink: 0;
+  background-color: var(--color-accent-soft); display: flex; align-items: center; justify-content: center;
+  font-size: 32px; color: var(--color-accent-strong); flex-shrink: 0;
 }
-.profile-name-text { font-size: 24px; font-weight: 700; color: #2d3e5d; }
+.profile-name-text { font-size: 24px; font-weight: 700; color: var(--color-primary); }
 
 .profile-info-grid {
   display: flex;
@@ -970,10 +970,10 @@ p { margin: 0; color: #666; font-size: 14px; }
 .activity-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
 
 /* 세부 텍스트 기존 유지 */
-.act-header { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; color: #2d3e5d; font-weight: 700; font-size: 15px; }
+.act-header { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; color: var(--color-primary); font-weight: 700; font-size: 15px; }
 .act-header svg { color: #64748b; width: 18px; height: 18px; }
 .act-label { font-size: 13px; color: #64748b; margin-bottom: 6px; }
-.act-main-val { font-size: 24px; font-weight: 800; color: #2d3e5d; margin-bottom: 6px; }
+.act-main-val { font-size: 24px; font-weight: 800; color: var(--color-primary); margin-bottom: 6px; }
 .act-sub-val { font-size: 14px; color: #475569; font-weight: 600; }
 
 /* 설정 섹션 기존 유지 */
@@ -994,11 +994,11 @@ p { margin: 0; color: #666; font-size: 14px; }
 
 /* 하단 버튼 기존 유지 */
 .edit-profile-btn {
-  background-color: #2d3e5d; color: white; padding: 16px 40px; border-radius: 8px;
+  background-color: var(--color-primary); color: white; padding: 16px 40px; border-radius: 8px;
   font-size: 16px; font-weight: 700; border: none; cursor: pointer;
   align-self: center; margin-top: 20px; width: 200px; transition: background-color 0.2s;
 }
-.edit-profile-btn:hover { background-color: #1e293b; }
+.edit-profile-btn:hover { background-color: var(--color-primary-hover); }
 
 /* 마이페이지 반응형 강화 */
 @media (max-width: 768px) {
@@ -1040,4 +1040,91 @@ p { margin: 0; color: #666; font-size: 14px; }
   flex-direction: column;
   gap: 24px;
   width: 100%;
+}
+
+/* === 진행률 도넛 섹션 === */
+.progress-section--donut {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.progress-section__hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-subtle);
+  font-weight: var(--font-weight-medium);
+}
+
+/* === 학습 기록 카드 (추이 + 잔디밭 포함) === */
+.learning-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+/* =========================================
+   11. 반응형 통합 (Tablet 768px / Mobile 480px)
+   ========================================= */
+@media (max-width: 768px) {
+  .dashboard-wrapper { padding: 24px 16px; }
+  .dashboard-header { gap: 12px; }
+  .brand { font-size: 17px; }
+
+  .welcome-card,
+  .cert-card,
+  .cbt-card { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .welcome-card .dark-btn,
+  .cert-card .light-btn,
+  .cbt-card .dark-btn { align-self: stretch; }
+
+  .extra-materials-grid { grid-template-columns: repeat(2, 1fr); }
+
+  .schedule-content-box { padding: 20px; }
+  .schedule-list-item { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .list-date-box {
+    border-right: none;
+    border-bottom: 1px solid #eee;
+    width: 100%;
+    padding-bottom: 12px;
+    margin-right: 0;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+  .list-status-box { width: 100%; justify-content: flex-start; }
+
+  .filter-row { align-items: flex-start; }
+  .filter-label { width: auto; }
+
+  .calendar-grid.big-grid .date-cell.big-cell { font-size: 14px; }
+
+  .sidebar-container { width: min(85vw, 320px); }
+}
+
+@media (max-width: 480px) {
+  .dashboard-wrapper { padding: 20px 14px; }
+  .dashboard-card { padding: 18px; border-radius: 16px; }
+  .icon-box { width: 42px; height: 42px; border-radius: 12px; }
+  h2 { font-size: 19px; }
+  h3 { font-size: 16px; }
+
+  .extra-materials-grid { grid-template-columns: 1fr; }
+
+  .schedule-content-box { padding: 16px; min-height: 480px; }
+  .calendar-grid { gap: 6px; }
+  .calendar-grid.big-grid { gap: 6px; }
+  .date-cell.big-cell { font-size: 12px; border-radius: 8px; }
+  .month-title { font-size: 14px; }
+
+  .profile-card { padding: 22px 18px; border-radius: 16px; }
+  .activity-card { padding: 18px; }
+  .act-main-val { font-size: 20px; }
+  .edit-profile-btn { width: 100%; }
+
+  .ranking-item { padding: 10px 4px; }
+  .rank-name { font-size: 13px; }
 }

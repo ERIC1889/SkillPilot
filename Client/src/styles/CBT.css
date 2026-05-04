@@ -2,9 +2,9 @@
 
 :root {
   --bg-color: #F4F7FC;
-  --primary-text: #1e293b;
+  --primary-text: var(--color-primary-hover);
   --secondary-text: #64748b;
-  --accent-color: #1e293b; /* 짙은 남색 */
+  --accent-color: var(--color-primary-hover); /* 짙은 남색 */
   --highlight-bg: #CFE4FA; /* 연한 파랑 배경 */
   --highlight-text: #1d4ed8; /* 연한 파랑 텍스트 */
 }
@@ -82,7 +82,7 @@
 
 .question-badge {
   display: inline-block;
-  background-color: #dbeafe; /* 더 부드러운 파랑 */
+  background-color: var(--color-accent-soft); /* 더 부드러운 파랑 */
   color: #1e40af;
   padding: 6px 16px;
   border-radius: 4px;
@@ -212,7 +212,7 @@
 }
 
 .btn-prev { background-color: #e2e8f0; color: #475569; }
-.btn-next { background-color: #1e293b; color: white; }
+.btn-next { background-color: var(--color-primary-hover); color: white; }
 .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .submit-area {
@@ -220,7 +220,7 @@
     text-align: center;
 }
 .btn-submit {
-    background-color: #1e293b; color: white;
+    background-color: var(--color-primary-hover); color: white;
     padding: 16px 60px; border-radius: 8px;
     font-size: 16px; font-weight: 600;
     border: none; cursor: pointer;
@@ -249,7 +249,7 @@
   margin-bottom: 12px; font-weight: 600;
 }
 .timer-value {
-  font-size: 48px; font-weight: 700; color: #1e293b;
+  font-size: 48px; font-weight: 700; color: var(--color-primary-hover);
   letter-spacing: -1px; margin-bottom: 8px;
   line-height: 1;
 }
@@ -285,16 +285,16 @@
 .omr-item:hover { background-color: #f8fafc; border-color: #cbd5e1; }
 
 .omr-item.current {
-  background-color: #1e293b;
+  background-color: var(--color-primary-hover);
   color: white;
-  border-color: #1e293b;
+  border-color: var(--color-primary-hover);
   font-weight: 600;
 }
 
 .omr-item.solved {
-  background-color: #dbeafe; /* 색상 더 부드럽게 */
+  background-color: var(--color-accent-soft); /* 색상 더 부드럽게 */
   color: #1e40af;
-  border-color: #dbeafe;
+  border-color: var(--color-accent-soft);
   font-weight: 600;
 }
 
@@ -330,8 +330,8 @@
     border-radius: 3px;
     border: 1px solid #e2e8f0;
 }
-.legend-box.current { background-color: #1e293b; border-color: #1e293b; }
-.legend-box.solved { background-color: #dbeafe; border-color: #dbeafe; }
+.legend-box.current { background-color: var(--color-primary-hover); border-color: var(--color-primary-hover); }
+.legend-box.solved { background-color: var(--color-accent-soft); border-color: var(--color-accent-soft); }
 .legend-box.unsolved { background-color: white; border-color: #cbd5e1; }
 .legend-box.marked { 
     border: none;
@@ -343,3 +343,54 @@
     width: 8px; height: 8px;
     background-color: #ef4444; border-radius: 50%;
 }
+
+/* CBT 메뉴 화면 추가 클래스 */
+.cbt-menu-main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-5);
+}
+.cbt-menu-actions {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+  flex-wrap: wrap;
+}
+.cbt-menu-section-title {
+  font-size: var(--font-size-2xl);
+  margin: 0 0 var(--space-3);
+  color: var(--color-primary-hover);
+}
+.cbt-history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cbt-history-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform var(--transition-fast), box-shadow var(--transition-base);
+}
+.cbt-history-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+.cbt-history-item:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(45, 62, 93, 0.25);
+}
+.cbt-history-date { font-weight: var(--font-weight-semibold); color: var(--color-primary-hover); }
+.cbt-history-meta { font-size: var(--font-size-sm); color: var(--color-text-subtle); margin-top: 4px; }
+.cbt-history-score { font-size: 22px; font-weight: var(--font-weight-bold); }
+.cbt-history-score.is-pass { color: #16a34a; }
+.cbt-history-score.is-fail { color: var(--color-danger); }
+

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import '../styles/AnswerAnalyze.css';
+import { Button, Loading, EmptyState } from '../components/ui';
+import { useAssistant } from '../components/assistant';
 
 const Icons = {
   Logo: () => (
@@ -16,6 +18,7 @@ const Icons = {
 };
 
 const AnswerAnalyze = ({ testId, onExit }) => {
+  const assistant = useAssistant();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
@@ -60,6 +63,16 @@ const AnswerAnalyze = ({ testId, onExit }) => {
         const wrong = questions.filter(q => !q.isCorrect).length;
         setCorrectCount(correct);
         setWrongCount(wrong);
+
+        // 어시스턴트 — 결과 보고 적절한 멘트
+        const accuracy = resultData.accuracy ?? 0;
+        if (accuracy >= 80) {
+          assistant.cheer('cheer.completed');
+        } else if (accuracy >= 60) {
+          assistant.tip('tip.cbt');
+        } else {
+          assistant.scold('scold.wrong');
+        }
       } catch (err) {
         console.error('Failed to fetch results:', err);
         setError('결과를 불러오는 중 오류가 발생했습니다.');
@@ -72,21 +85,21 @@ const AnswerAnalyze = ({ testId, onExit }) => {
 
   if (loading) {
     return (
-      <div className="analyze-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '18px', color: '#64748b' }}>AI가 오답을 분석하고 있습니다...</p>
-        </div>
+      <div className="analyze-container">
+        <Loading variant="block" size="lg" label="AI가 오답을 분석하고 있습니다" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="analyze-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '18px', color: '#ef4444', marginBottom: '16px' }}>{error}</p>
-          <button className="btn-roadmap" onClick={onExit}>돌아가기</button>
-        </div>
+      <div className="analyze-container">
+        <EmptyState
+          icon="⚠️"
+          title="결과를 불러올 수 없습니다"
+          description={error}
+          action={<Button onClick={onExit}>돌아가기</Button>}
+        />
       </div>
     );
   }
@@ -205,7 +218,7 @@ const AnswerAnalyze = ({ testId, onExit }) => {
 
         {/* 5. 하단 버튼 */}
         <div className="footer-action">
-          <button className="btn-roadmap" onClick={onExit}>로드맵 조정하기</button>
+          <Button size="lg" onClick={onExit}>로드맵 조정하기</Button>
           <span className="footer-text">AI가 취약 영역을 반영하여 학습 로드맵을 재구성합니다</span>
         </div>
 

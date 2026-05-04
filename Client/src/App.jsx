@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { Loading } from './components/ui';
+import { Assistant, AssistantProvider } from './components/assistant';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ProfileSetup from './pages/ProfileSetup';
@@ -33,7 +35,7 @@ function ProtectedRoute({ children, allowIncomplete = false }) {
   const { isAuthenticated, loading, onboarding } = useAuth();
   const location = useLocation();
 
-  if (loading) return <div className="loading-screen">로딩중...</div>;
+  if (loading) return <Loading variant="overlay" size="lg" label="불러오는 중" />;
   if (!isAuthenticated) return <Navigate to="/" replace />;
 
   // 온보딩이 완료되지 않았으면 현재 스텝으로 유도
@@ -61,7 +63,9 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Routes>
+        <AssistantProvider>
+          <Assistant />
+          <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
@@ -140,7 +144,8 @@ function App() {
               </ProtectedRoute>
             }
           />
-        </Routes>
+          </Routes>
+        </AssistantProvider>
       </BrowserRouter>
     </AuthProvider>
   );

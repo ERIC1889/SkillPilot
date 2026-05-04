@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../styles/portfolioPreview.css";
 import SPLogo from "../assets/logo.png";
 import api from "../services/api";
+import { Button, Loading } from "../components/ui";
 
 export default function PortfolioPreview() {
   const navigate = useNavigate();
@@ -17,9 +18,7 @@ export default function PortfolioPreview() {
   if (!data) {
     return (
       <div className="preview-page">
-        <div style={{ textAlign: 'center', padding: '60px', color: '#666' }}>
-          포트폴리오를 불러오는 중...
-        </div>
+        <Loading variant="block" size="lg" label="포트폴리오를 불러오는 중" />
       </div>
     );
   }
@@ -105,9 +104,7 @@ export default function PortfolioPreview() {
       </div>
 
       <div className="preview-footer">
-        <button className="create-btn" onClick={() => navigate("/dashboard")}>
-          돌아가기
-        </button>
+        <Button size="lg" onClick={() => navigate("/dashboard")}>돌아가기</Button>
       </div>
     </div>
   );

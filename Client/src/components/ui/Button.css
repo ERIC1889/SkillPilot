@@ -1,0 +1,106 @@
+.sp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--transition-base),
+              color var(--transition-base),
+              border-color var(--transition-base),
+              transform var(--transition-fast),
+              box-shadow var(--transition-base);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.sp-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.sp-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  transform: none;
+}
+
+.sp-btn--full {
+  width: 100%;
+}
+
+/* Sizes */
+.sp-btn--sm {
+  padding: 8px 14px;
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+}
+.sp-btn--md {
+  padding: 12px 20px;
+  font-size: var(--font-size-base);
+}
+.sp-btn--lg {
+  padding: 16px 28px;
+  font-size: var(--font-size-lg);
+}
+
+/* Primary */
+.sp-btn--primary {
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+.sp-btn--primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+/* Secondary (soft blue tint) */
+.sp-btn--secondary {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+.sp-btn--secondary:hover:not(:disabled) {
+  background: var(--color-accent-soft);
+}
+
+/* Ghost */
+.sp-btn--ghost {
+  background: transparent;
+  color: var(--color-text-muted);
+  border-color: var(--color-border);
+}
+.sp-btn--ghost:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  color: var(--color-text);
+}
+
+/* Danger */
+.sp-btn--danger {
+  background: var(--color-danger);
+  color: var(--color-text-on-primary);
+}
+.sp-btn--danger:hover:not(:disabled) {
+  background: #dc2626;
+}
+
+/* Spinner */
+.sp-btn__spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: sp-btn-spin 0.7s linear infinite;
+}
+
+@keyframes sp-btn-spin {
+  to { transform: rotate(360deg); }
+}
+
+.sp-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

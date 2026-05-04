@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import api from '../services/api';
-import '../styles/CBT.css'; // 기존 CBT 스타일
+import '../styles/CBT.css';
 import AnswerAnalyze from './AnswerAnalyze';
+import { Button, Loading, EmptyState } from '../components/ui';
+import { useAssistant } from '../components/assistant';
 
 const Icons = {
   Flag: () => (
@@ -21,16 +23,8 @@ const Icons = {
 };
 
 const CBT = ({ onExit, certId, certTitle }) => {
-  if (!certId) {
-    return (
-      <div className="cbt-fullscreen-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '18px', color: '#ef4444', marginBottom: '16px' }}>자격증을 먼저 선택해야 CBT 모의고사를 시작할 수 있습니다.</p>
-          <button className="btn-submit" onClick={onExit} style={{ padding: '10px 24px' }}>돌아가기</button>
-        </div>
-      </div>
-    );
-  }
+  const assistant = useAssistant();
+
   // 상태 관리
   const [mode, setMode] = useState('menu'); // 'menu' | 'taking'
   const [testId, setTestId] = useState(null); // 제출 후 결과 ID
@@ -45,6 +39,33 @@ const CBT = ({ onExit, certId, certTitle }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const greetedRef = useRef(false);
+
+  // 어시스턴트 — 메뉴 진입 시 한 번 인사
+  useEffect(() => {
+    if (mode === 'menu' && !greetedRef.current) {
+      assistant.tip('tip.cbt');
+      greetedRef.current = true;
+    }
+    if (mode === 'taking') {
+      assistant.cheer('cheer.streak');
+    }
+  }, [mode, assistant]);
+
+  // 어시스턴트 — 5문제마다 응원, 답 안 하면 채찍
+  useEffect(() => {
+    if (mode !== 'taking' || questions.length === 0) return;
+    if (currentIndex > 0 && currentIndex % 5 === 0) {
+      assistant.cheer('cheer.streak');
+    }
+  }, [currentIndex, mode, questions.length, assistant]);
+
+  // 시간 30초 남았을 때 채찍
+  useEffect(() => {
+    if (mode === 'taking' && timeLeft === 30) {
+      assistant.scold('scold.timeout');
+    }
+  }, [timeLeft, mode, assistant]);
 
   // 이전 응시 기록 불러오기 (메뉴 모드)
   useEffect(() => {
@@ -99,6 +120,20 @@ const CBT = ({ onExit, certId, certTitle }) => {
     return () => clearInterval(timer);
   }, [timeLeft, testId, loading]);
 
+  // certId 없으면 안내 화면 — hooks 호출 다음 위치
+  if (!certId) {
+    return (
+      <div className="cbt-fullscreen-container">
+        <EmptyState
+          icon="📚"
+          title="자격증을 먼저 선택해주세요"
+          description="대시보드에서 자격증을 선택하면 CBT 모의고사를 시작할 수 있습니다."
+          action={<Button onClick={onExit}>돌아가기</Button>}
+        />
+      </div>
+    );
+  }
+
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -129,6 +164,7 @@ const CBT = ({ onExit, certId, certTitle }) => {
 
       const resultId = res.data.data._id;
       setTestId(resultId);
+      assistant.cheer('cheer.completed');
       window.scrollTo(0, 0);
     } catch (err) {
       console.error('Failed to submit:', err);
@@ -171,26 +207,22 @@ const CBT = ({ onExit, certId, certTitle }) => {
           </div>
         </header>
 
-        <main style={{ maxWidth: 760, margin: '0 auto', padding: '32px 20px' }}>
-          <div style={{ display: 'flex', gap: 12, marginBottom: 28 }}>
-            <button className="btn-submit" style={{ padding: '12px 24px' }} onClick={() => setMode('taking')}>
-              새 모의고사 시작
-            </button>
-            <button className="btn-submit" style={{ padding: '12px 24px', background: '#e5e7eb', color: '#111827' }} onClick={onExit}>
-              돌아가기
-            </button>
+        <main className="cbt-menu-main">
+          <div className="cbt-menu-actions">
+            <Button size="lg" onClick={() => setMode('taking')}>새 모의고사 시작</Button>
+            <Button size="lg" variant="ghost" onClick={onExit}>돌아가기</Button>
           </div>
 
-          <h2 style={{ fontSize: 20, marginBottom: 12, color: '#1E293B' }}>이전 응시 기록</h2>
+          <h2 className="cbt-menu-section-title">이전 응시 기록</h2>
 
-          {historyLoading && <p style={{ color: '#64748b' }}>불러오는 중...</p>}
+          {historyLoading && <Loading variant="block" label="불러오는 중" />}
 
           {!historyLoading && history.length === 0 && (
-            <p style={{ color: '#64748b' }}>아직 응시한 모의고사가 없습니다.</p>
+            <EmptyState icon="📝" title="아직 응시한 모의고사가 없습니다" />
           )}
 
           {!historyLoading && history.length > 0 && (
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <ul className="cbt-history-list">
               {history.map((r) => {
                 const date = r.createdAt ? new Date(r.createdAt).toLocaleString('ko-KR') : '-';
                 const score = typeof r.totalScore === 'number' ? r.totalScore : '-';
@@ -199,25 +231,22 @@ const CBT = ({ onExit, certId, certTitle }) => {
                 return (
                   <li
                     key={r._id}
+                    className="cbt-history-item"
                     onClick={() => setViewingTestId(r._id)}
-                    style={{
-                      background: '#fff',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: 10,
-                      padding: '14px 18px',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setViewingTestId(r._id);
+                      }
                     }}
                   >
                     <div>
-                      <div style={{ fontWeight: 600, color: '#1E293B' }}>{date}</div>
-                      <div style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>
-                        정답 {correct}/{total}문항
-                      </div>
+                      <div className="cbt-history-date">{date}</div>
+                      <div className="cbt-history-meta">정답 {correct}/{total}문항</div>
                     </div>
-                    <div style={{ fontSize: 22, fontWeight: 700, color: score >= 60 ? '#16a34a' : '#dc2626' }}>
+                    <div className={`cbt-history-score ${score !== '-' && score >= 60 ? 'is-pass' : 'is-fail'}`}>
                       {score}점
                     </div>
                   </li>
@@ -233,10 +262,8 @@ const CBT = ({ onExit, certId, certTitle }) => {
   // 로딩 상태
   if (loading) {
     return (
-      <div className="cbt-fullscreen-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '18px', color: '#64748b' }}>문제를 불러오는 중...</p>
-        </div>
+      <div className="cbt-fullscreen-container">
+        <Loading variant="block" size="lg" label="문제를 불러오는 중" />
       </div>
     );
   }
@@ -244,11 +271,13 @@ const CBT = ({ onExit, certId, certTitle }) => {
   // 에러 또는 문제 없음 상태
   if (error || questions.length === 0) {
     return (
-      <div className="cbt-fullscreen-container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '18px', color: '#ef4444', marginBottom: '16px' }}>{error || '문제를 불러올 수 없습니다.'}</p>
-          <button className="btn-submit" onClick={onExit} style={{ padding: '10px 24px' }}>돌아가기</button>
-        </div>
+      <div className="cbt-fullscreen-container">
+        <EmptyState
+          icon="⚠️"
+          title="문제를 불러올 수 없습니다"
+          description={error || '등록된 문제가 없습니다.'}
+          action={<Button onClick={onExit}>돌아가기</Button>}
+        />
       </div>
     );
   }

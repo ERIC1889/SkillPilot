@@ -9,6 +9,7 @@ import {
 
 import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { Button, Loading, EmptyState } from '../components/ui';
 import '../styles/roadmap.css';
 
 function SortableWeekCard({ week, index, onDelete, onEdit }) {
@@ -198,23 +199,25 @@ export default function WeeklyRoadmap() {
   };
 
   return (
-    <div className="roadmap-wrapper">
+    <main className="roadmap-wrapper">
       <header className="roadmap-header">
         <h1 className="roadmap-title">
-          <img src="/SPLogo.png" alt="logo" className="roadmap-logo" />
+          <img src="/SPLogo.png" alt="" aria-hidden="true" className="roadmap-logo" />
           {certTitle ? `${certTitle} 로드맵` : '주간 로드맵 생성'}
         </h1>
         <p>자격증 취득을 위한 맞춤형 학습 계획을 세워보세요</p>
       </header>
 
-      <section className="white-box priority-section">
-        <h3 className="section-title"><FiStar size={20} /> 학습 우선순위</h3>
-        <div className="priority-buttons">
+      <section className="white-box priority-section" aria-labelledby="priority-title">
+        <h3 className="section-title" id="priority-title"><FiStar size={20} aria-hidden="true" /> 학습 우선순위</h3>
+        <div className="priority-buttons" role="group" aria-label="학습 우선순위 선택">
           {['빠른 취득', '깊이있는 학습', '균형잡힌 학습'].map((item) => (
             <button
               key={item}
+              type="button"
               className={priority === item ? 'active' : ''}
               onClick={() => changePriority(item)}
+              aria-pressed={priority === item}
             >
               {item}
             </button>
@@ -222,22 +225,18 @@ export default function WeeklyRoadmap() {
         </div>
       </section>
 
-      <section className="white-box week-section">
-        <h3 className="section-title"><FiTarget size={20} /> 주차별 학습 계획</h3>
+      <section className="white-box week-section" aria-labelledby="week-title">
+        <h3 className="section-title" id="week-title"><FiTarget size={20} aria-hidden="true" /> 주차별 학습 계획</h3>
 
-        {loading && (
-          <div style={{ textAlign: 'center', padding: 40, color: '#666' }}>
-            AI가 로드맵을 생성하고 있습니다...
-          </div>
-        )}
+        {loading && <Loading variant="block" size="lg" label="AI가 로드맵을 생성하고 있습니다" />}
 
         {!loading && error && (
-          <div style={{ textAlign: 'center', padding: 20, color: '#c0392b' }}>
-            {error}
-            <div style={{ marginTop: 12 }}>
-              <button className="priority-buttons active" onClick={loadRoadmap}>다시 생성</button>
-            </div>
-          </div>
+          <EmptyState
+            icon="⚠️"
+            title="로드맵을 불러오지 못했습니다"
+            description={error}
+            action={<Button variant="primary" onClick={loadRoadmap}>다시 생성</Button>}
+          />
         )}
 
         {!loading && !error && weeks.length > 0 && (
@@ -258,18 +257,26 @@ export default function WeeklyRoadmap() {
           </DndContext>
         )}
 
+        {!loading && !error && weeks.length === 0 && (
+          <EmptyState
+            icon="🗺️"
+            title="아직 주차가 없습니다"
+            description="아래 ‘주차 추가’ 버튼으로 첫 주를 만들어 보세요."
+          />
+        )}
+
         {!loading && !error && (
-          <button className="add-week-btn" onClick={addWeek}>
-            <FiPlus size={18} /> 주차 추가
+          <button type="button" className="add-week-btn" onClick={addWeek}>
+            <FiPlus size={18} aria-hidden="true" /> 주차 추가
           </button>
         )}
       </section>
 
       <div className="footer-action">
-        <button className="complete-btn" disabled={saving || loading || !!error} onClick={handleComplete}>
+        <Button size="lg" loading={saving} disabled={loading || !!error} onClick={handleComplete}>
           {saving ? '저장 중...' : '로드맵 완성'}
-        </button>
+        </Button>
       </div>
-    </div>
+    </main>
   );
 }

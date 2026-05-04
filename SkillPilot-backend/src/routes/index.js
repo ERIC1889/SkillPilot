@@ -15,5 +15,6 @@ router.use('/mock-interview', require('./mockInterview.routes'));
 router.use('/skill-gap', require('./skillGap.routes'));
 router.use('/jobs', require('./job.routes'));
 router.use('/admin', require('./admin.routes'));
+router.use('/assistant', require('./assistant.routes'));
 
 module.exports = router;

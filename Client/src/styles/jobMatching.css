@@ -60,7 +60,7 @@
 .jm-score span {
   font-size: 24px;
   font-weight: 700;
-  color: #3b82f6;
+  color: var(--color-accent);
 }
 
 .jm-block {
@@ -192,7 +192,7 @@
 
 .jm-apply {
   display: inline-block;
-  background: #3b82f6;
+  background: var(--color-accent);
   color: #fff;
   padding: 6px 12px;
   border-radius: 6px;

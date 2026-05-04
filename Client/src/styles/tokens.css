@@ -1,0 +1,110 @@
+:root {
+  /* Brand */
+  --color-primary: #2d3e5d;
+  --color-primary-hover: #1e293b;
+  --color-primary-soft: #e5effa;
+  --color-primary-soft-border: #bad6f5;
+
+  /* Accent blue */
+  --color-accent: #3b82f6;
+  --color-accent-strong: #1e40af;
+  --color-accent-deep: #1e3a8a;
+  --color-accent-soft: #dbeafe;
+  --color-accent-soft-border: #bfdbfe;
+
+  /* Surface / background */
+  --color-bg-app: #f5f8fc;
+  --color-bg-page: #f0f4ff;
+  --color-bg-subtle: #f8fafc;
+  --color-bg-muted: #f1f5f9;
+  --color-bg-hover: #f9fafb;
+  --color-surface: #ffffff;
+
+  /* Border */
+  --color-border: #e5e7eb;
+  --color-border-soft: #f0f4f8;
+  --color-border-strong: #cbd5e1;
+
+  /* Text */
+  --color-text: #1f2937;
+  --color-text-strong: #0f172a;
+  --color-text-muted: #4b5563;
+  --color-text-subtle: #6b7280;
+  --color-text-faint: #94a3b8;
+  --color-text-on-primary: #ffffff;
+
+  /* Status */
+  --color-danger: #ef4444;
+  --color-danger-soft: #fee2e2;
+  --color-warning: #fbbf24;
+  --color-success: #22c55e;
+  --color-success-soft: #dcfce7;
+
+  /* Radius */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* Typography */
+  --font-family: 'Pretendard', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-base: 14px;
+  --font-size-md: 15px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+  --font-size-2xl: 20px;
+  --font-size-3xl: 22px;
+  --font-size-4xl: 24px;
+  --font-size-5xl: 28px;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  --line-height-tight: 1.2;
+  --line-height-normal: 1.5;
+
+  /* Shadow */
+  --shadow-card: 0 4px 20px rgba(15, 23, 42, 0.04);
+  --shadow-card-hover: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --shadow-pop: 0 10px 40px rgba(15, 23, 42, 0.15);
+  --shadow-focus: 0 0 0 3px rgba(59, 130, 246, 0.35);
+
+  /* Motion */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+
+  /* Layout */
+  --container-max: 1280px;
+  --header-height: 64px;
+  --sidebar-width: 300px;
+
+  /* Z-index */
+  --z-overlay: 999;
+  --z-drawer: 1000;
+  --z-modal: 2000;
+}
+
+/* Focus visible — 키보드 포커스에만 링 표시 */
+*:focus { outline: none; }
+*:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}

@@ -1,3 +1,5 @@
+Resume this session with:                                                             
+claude --resume 171a9e24-f28b-493f-9b88-bb0b96af961a
 # SkillPilot
 
 IT 취업준비생을 위한 올인원 커리어 지원 플랫폼
@@ -22,11 +24,12 @@ IT 취업준비생을 위한 올인원 커리어 지원 플랫폼
 - **AI 맞춤 로드맵** — 자격증별 주차 계획을 AI 가 생성, 드래그 재정렬 & 편집 백엔드 영속
 - **CBT 모의고사** — 문제 부족 시 AI 가 과목별 자동 생성, 실시간 채점
 - **AI 오답 분석** — 틀린 문제별 상세 해설과 학습 팁 자동 생성
-- **학습 기록** — 일/주/월 기준 학습 시간 집계 및 대시보드 표시
-- **AI 모의면접** — 지원 직무 기반 연속 대화형 기술 면접, 턴별 피드백·점수
+- **학습 기록 & 시각화** — 일/주/월 학습 시간 집계 + 대시보드 통계 카드 4종 + GitHub-style 학습 잔디밭 + 14일 추이 라인 차트 + 로드맵 진행률 도넛
+- **AI 모의면접** — 지원 직무 기반 연속 대화형 기술 면접, 턴별 피드백·점수, 빠른 시작 직무 chips 8종
 - **스킬갭 분석** — 목표 직무 대비 부족 스킬·추천 학습 순서 AI 생성
 - **채용 매칭** — 보유 스킬·자격증·목표 직무 가중치 기반 매칭 점수 산출
 - **포트폴리오** — 스킬, 자격증, 프로젝트, 활동, 링크 편집 & 프리뷰
+- **🦉 학습 메이트 (AI 챗봇 + 자동 응원)** — 모든 페이지 따라다니는 플로팅 코치. 챗 패널은 OpenAI 연결, 자동 응원 말풍선·CBT/면접 결과별 멘트 분기·90초 비활동 채찍·대시보드 회전 응원 배너
 - **관리자 API** — `X-Admin-Key` 헤더 기반 동기화·문제 생성 트리거
 
 ## 기술 스택
@@ -38,7 +41,9 @@ IT 취업준비생을 위한 올인원 커리어 지원 플랫폼
 | Routing | React Router v7 + `OnboardingGuard` |
 | HTTP Client | Axios (JWT 인터셉터) |
 | Drag & Drop | dnd-kit |
+| Charts | Recharts (학습 추이 AreaChart) + 자체 SVG 도넛/heatmap |
 | Icons | React Icons |
+| Design System | CSS Variables 토큰(`src/styles/tokens.css`) + 공통 UI 6종(`src/components/ui/*`) |
 
 ### Backend
 | 항목 | 기술 |
@@ -62,9 +67,15 @@ SkillPilot/
 │   │   │                               # CertificationRecommendation, WeeklyRoadmap,
 │   │   │                               # Dashboard, CBT, AnswerAnalyze, Portfolio,
 │   │   │                               # PortfolioPreview, MockInterview, JobMatching
+│   │   ├── components/
+│   │   │   ├── ui/                    # Button, Card, Input, Modal, Loading, EmptyState
+│   │   │   ├── assistant/             # 🦉 학습 메이트 (Assistant + AssistantContext +
+│   │   │   │                           # CheerBanner + messages)
+│   │   │   └── dashboard/             # StatRow, ProgressDonut, StudyHeatmap,
+│   │   │                               # StudyTrendChart
 │   │   ├── contexts/AuthContext.jsx   # 온보딩 상태 관리
 │   │   ├── services/api.js            # Axios 인스턴스
-│   │   └── styles/
+│   │   └── styles/                    # tokens.css(디자인 토큰) + 페이지별 CSS
 │   └── vite.config.js
 │
 └── SkillPilot-backend/                # Express 백엔드
@@ -112,6 +123,7 @@ SkillPilot/
 | Mock Interview | `/mock-interview/{start,:id,:id/answer}` | Yes |
 | Skill Gap | `/skill-gap` | Yes |
 | Jobs | `/jobs{,/matches}` | Partial |
+| Assistant | `/assistant/chat` (학습 메이트 챗봇) | Yes |
 | Admin | `/admin/{sync/certifications,sync/exam-schedules,generate-questions}` | X-Admin-Key |
 
 ## 설치 및 실행
@@ -214,6 +226,16 @@ ADMIN_API_KEY=
 - **오답 분석** — 틀린 문제별 해설·팁을 GPT 가 생성
 - **모의면접** — 턴 단위 기술 질문·피드백을 GPT 가 생성
 - **스킬갭 분석** — 목표 직무 대비 강점·부족 스킬을 GPT 가 분석
+- **학습 메이트 챗봇** — 사용자 자유 입력에 1~3문장 코칭 응답 (캐릭터 system prompt + 최근 10턴 컨텍스트). API 실패 시 키워드 기반 mock 응답으로 자동 fallback. `max_tokens` 미지원 신모델은 `max_completion_tokens` 자동 재시도
+
+## UI / 디자인 시스템
+
+- **디자인 토큰** (`Client/src/styles/tokens.css`) — 색상·radius·spacing·typography·shadow 를 CSS 변수로 통합. 전체 톤은 navy(#2d3e5d) + accent blue(#3b82f6) + 부드러운 회색.
+- **공통 UI 컴포넌트 6종** (`components/ui/`) — Button / Card / Input / Modal / Loading / EmptyState. 13개 페이지에서 재사용.
+- **🦉 학습 메이트** (`components/assistant/`) — 모든 페이지 따라다니는 플로팅 코치(알약 도크). 챗 패널은 OpenAI 연결, 자동 응원 말풍선·라우트별 멘트·90초 비활동 채찍·CBT/면접 결과별 cheer/scold/tip 분기는 mock 메시지 풀에서.
+- **대시보드 위젯** (`components/dashboard/`) — 4종 통계 카드(StatRow), SVG 진행률 도넛(ProgressDonut), 12주 학습 잔디밭(StudyHeatmap), Recharts 14일 추이(StudyTrendChart) + 회전 응원 배너(CheerBanner).
+- **반응형** — 480 / 768 / 900 / 1024 4단계 브레이크포인트.
+- **접근성** — `role`/`aria-*` 속성, 키보드 포커스 링, sr-only 라벨, `prefers-reduced-motion` 자동 감속.
 
 ## 보안 주의
 

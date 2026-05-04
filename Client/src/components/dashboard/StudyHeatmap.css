@@ -1,0 +1,83 @@
+.sp-heatmap {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sp-heatmap__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.sp-heatmap__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+.sp-heatmap__sub {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-subtle);
+  margin-top: 2px;
+}
+
+.sp-heatmap__legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--color-text-faint);
+}
+.sp-heatmap__sample {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.sp-heatmap__grid {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 6px 0;
+}
+
+.sp-heatmap__col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.sp-heatmap__cell,
+.sp-heatmap__sample {
+  /* navy 톤 안에서 농도만 변화 — SkillPilot 본래 톤과 일치 */
+  --c0: #eef2f7;
+  --c1: #d7e1ea;
+  --c2: #aac0d6;
+  --c3: #6e8bb3;
+  --c4: var(--color-primary);
+}
+
+.sp-heatmap__cell {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  background: var(--c0);
+  transition: transform var(--transition-fast);
+  cursor: default;
+}
+.sp-heatmap__cell:hover {
+  transform: scale(1.25);
+  outline: 1px solid var(--color-primary);
+}
+
+.sp-heatmap__cell[data-level="1"], .sp-heatmap__sample[data-level="1"] { background: var(--c1); }
+.sp-heatmap__cell[data-level="2"], .sp-heatmap__sample[data-level="2"] { background: var(--c2); }
+.sp-heatmap__cell[data-level="3"], .sp-heatmap__sample[data-level="3"] { background: var(--c3); }
+.sp-heatmap__cell[data-level="4"], .sp-heatmap__sample[data-level="4"] { background: var(--c4); }
+.sp-heatmap__sample[data-level="0"] { background: var(--c0); }
+
+@media (max-width: 480px) {
+  .sp-heatmap__cell { width: 11px; height: 11px; }
+}

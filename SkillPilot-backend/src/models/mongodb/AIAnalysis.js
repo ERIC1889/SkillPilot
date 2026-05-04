@@ -21,7 +21,7 @@ const aiAnalysisSchema = new mongoose.Schema({
   },
   model: {
     type: String,
-    default: 'gpt-3.5-turbo',
+    default: 'gpt-5.4-nano',
   },
   tokensUsed: {
     type: Number,

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FiMonitor, FiServer, FiCode, FiSmartphone, FiDatabase, FiBarChart2, FiLayers, FiMoreHorizontal, FiChevronLeft } from 'react-icons/fi';
 import api from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { Button } from '../components/ui';
 import '../styles/signup.css';
 
 function GoalSetting() {
@@ -50,37 +51,52 @@ function GoalSetting() {
   };
 
   return (
-    <div className="signup-wrapper">
-      <div className="profile-header-section">
-        <button type="button" className="back-button" onClick={() => navigate(-1)}><FiChevronLeft /></button>
-        <div className="logo-group"><img src="/SPLogo.png" alt="Logo" className="header-logo" /><h1 className="header-brand">SkillPilot</h1></div>
-        <h2 className="header-title" style={{ width: '100%', justifyContent: 'center' }}>프로필 설정</h2>
-      </div>
+    <main className="signup-wrapper">
+      <header className="profile-header-section">
+        <button type="button" className="back-button" onClick={() => navigate(-1)} aria-label="이전 페이지로 돌아가기">
+          <FiChevronLeft aria-hidden="true" />
+        </button>
+        <div className="logo-group">
+          <img src="/SPLogo.png" alt="" aria-hidden="true" className="header-logo" />
+          <h1 className="header-brand">SkillPilot</h1>
+        </div>
+        <h2 className="header-title" style={{ width: '100%', justifyContent: 'center' }}>목표 설정</h2>
+      </header>
 
-      {error && <div style={{ color: '#dc2626', fontSize: '14px', textAlign: 'center', marginBottom: '12px' }}>{error}</div>}
+      {error && <div className="signup-error" role="alert">{error}</div>}
 
-      <div className="goal-card">
+      <section className="goal-card">
         <h3 className="card-subtitle">목표 설정</h3>
 
         <div className="goal-group">
-          <label className="goal-label">기술스택</label>
-          <input className="goal-input" placeholder="기술스택을 입력하세요" value={techStack} onChange={(e) => setTechStack(e.target.value)} />
+          <label className="goal-label" htmlFor="goal-tech-stack">기술스택</label>
+          <input id="goal-tech-stack" className="goal-input" placeholder="기술스택을 입력하세요" value={techStack} onChange={(e) => setTechStack(e.target.value)} />
         </div>
 
         <div className="goal-group">
-          <label className="goal-label">희망직무</label>
-          <div className="role-grid">
-            {roles.map(r => (
-              <div key={r.id} className={`role-item ${selectedRoles.includes(r.name) ? 'active' : ''}`} onClick={() => toggleRole(r.name)}>
-                <span className="role-icon">{r.icon}</span>
-                <span className="role-name">{r.name}</span>
-              </div>
-            ))}
+          <span className="goal-label" id="goal-roles-label">희망직무</span>
+          <div className="role-grid" role="group" aria-labelledby="goal-roles-label">
+            {roles.map(r => {
+              const active = selectedRoles.includes(r.name);
+              return (
+                <button
+                  type="button"
+                  key={r.id}
+                  className={`role-item ${active ? 'active' : ''}`}
+                  onClick={() => toggleRole(r.name)}
+                  aria-pressed={active}
+                >
+                  <span className="role-icon" aria-hidden="true">{r.icon}</span>
+                  <span className="role-name">{r.name}</span>
+                </button>
+              );
+            })}
           </div>
 
           {selectedRoles.includes('기타') && (
             <div className="etc-input-container" style={{ marginTop: '10px', width: '100%', boxSizing: 'border-box' }}>
               <input
+                aria-label="기타 직무 직접 입력"
                 className="goal-input"
                 placeholder="직무를 직접 입력하세요"
                 value={etcRole}
@@ -91,16 +107,16 @@ function GoalSetting() {
         </div>
 
         <div className="goal-group">
-          <label className="goal-label">준비기간</label>
-          <input type="range" min="1" max="12" value={period} className="period-slider" onChange={(e) => setPeriod(e.target.value)} />
-          <div className="period-value">{period}개월</div>
+          <label className="goal-label" htmlFor="goal-period">준비기간</label>
+          <input id="goal-period" type="range" min="1" max="12" value={period} className="period-slider" onChange={(e) => setPeriod(e.target.value)} aria-valuetext={`${period}개월`} />
+          <div className="period-value" aria-live="polite">{period}개월</div>
         </div>
 
-        <button className="complete-button" disabled={loading} onClick={handleComplete}>
+        <Button fullWidth size="lg" loading={loading} onClick={handleComplete} className="complete-button-spacing">
           {loading ? '저장 중...' : '완료하기'}
-        </button>
-      </div>
-    </div>
+        </Button>
+      </section>
+    </main>
   );
 }
 

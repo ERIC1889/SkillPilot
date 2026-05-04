@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #f0f4ff;
+  background-color: var(--color-bg-page);
   min-height: 100vh;
   box-sizing: border-box;
 }
@@ -27,8 +27,8 @@
 }
 
 .header-logo, .signup-logo { width: 60px; height: auto; }
-.header-brand { font-size: 32px; font-weight: 800; color: #1e293b; margin: 0; }
-.signup-title { font-size: 22px; font-weight: 800; color: #1e293b; margin: 0; }
+.header-brand { font-size: 32px; font-weight: 800; color: var(--color-primary-hover); margin: 0; }
+.signup-title { font-size: 22px; font-weight: 800; color: var(--color-primary-hover); margin: 0; }
 .header-title { font-size: 22px; font-weight: 800; color: #334155; margin: 0; }
 .header-desc {font-size: 16px; margin-top: 5px;}
 /* 뒤로가기 버튼 */
@@ -63,7 +63,7 @@
   box-sizing: border-box;
 }
 
-.card-subtitle { font-size: 18px; font-weight: 700; margin: 0 0 20px; color: #1e293b; }
+.card-subtitle { font-size: 18px; font-weight: 700; margin: 0 0 20px; color: var(--color-primary-hover); }
 
 /* 입력 그룹 */
 .input-group, .goal-group {
@@ -104,25 +104,31 @@
   justify-content: center;
   padding: 8px 5px;
   min-height: 70px;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 12px;
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  background-color: #fff;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-family: inherit;
   transition: all 0.2s;
 }
+.role-item:hover {
+  border-color: var(--color-primary);
+  background: var(--color-bg-hover);
+}
 
-.role-item.active { background-color: #dbeafe !important; border-color: #3b82f6 !important; }
+.role-item.active { background-color: var(--color-accent-soft) !important; border-color: var(--color-accent) !important; }
 .role-icon { font-size: 20px; color: #64748b; margin-bottom: 4px; }
-.role-item.active .role-icon, .role-item.active .role-name { color: #1e40af; }
+.role-item.active .role-icon, .role-item.active .role-name { color: var(--color-accent-strong); }
 .role-name { font-size: 11px; font-weight: 500; text-align: center; }
 
 /* 슬라이더 및 버튼 */
-.period-slider { width: 100%; accent-color: #2d3e5d; margin: 10px 0; cursor: pointer; }
-.period-value { text-align: center; font-size: 14px; font-weight: 700; color: #1e293b; }
+.period-slider { width: 100%; accent-color: var(--color-primary); margin: 10px 0; cursor: pointer; }
+.period-value { text-align: center; font-size: 14px; font-weight: 700; color: var(--color-primary-hover); }
 .signup-button, .complete-button {
   width: 100%;
   padding: 16px;
-  background-color: #2d3e5d;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   border-radius: 10px;
@@ -177,7 +183,7 @@
 }
 .recommend-title {
   font-size: 28px;
-  color: #1e293b;
+  color: var(--color-primary-hover);
   margin: 0;
   font-weight: 800;
 }
@@ -213,7 +219,7 @@
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 .recommend-card.active {
-  border: 2px solid #3b82f6;
+  border: 2px solid var(--color-accent);
   background-color: #f8faff;
 }
 
@@ -247,7 +253,7 @@
 .info-value {
   font-size: 18px;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--color-primary-hover);
 }
 
 
@@ -263,7 +269,7 @@
   transition: all 0.2s;
 }
 .card-select-btn.selected {
-  background-color: #3b82f6;
+  background-color: var(--color-accent);
   color: white;
 }
 
@@ -342,7 +348,7 @@
 .recommend-title { 
   font-size: 28px; 
   font-weight: 800; 
-  color: #1e293b; /* 진한 네이비 */
+  color: var(--color-primary-hover); /* 진한 네이비 */
   margin: 0; 
 }
 
@@ -400,7 +406,7 @@
 }
 
 .recommend-card.active { 
-  border: 2px solid #3b82f6; 
+  border: 2px solid var(--color-accent); 
   background-color: #f8faff; 
 }
 
@@ -478,7 +484,7 @@
 
 .card-title { 
   font-size: 1.1rem; 
-  color: #1e293b; 
+  color: var(--color-primary-hover); 
   margin: 0; 
 }
 
@@ -498,7 +504,7 @@
 .info-value { 
   font-size: 18px; 
   font-weight: 700; 
-  color: #1e293b; 
+  color: var(--color-primary-hover); 
 }
 
 .card-select-btn {
@@ -514,7 +520,7 @@
 }
 
 .card-select-btn.selected { 
-  background-color: #3b82f6; 
+  background-color: var(--color-accent); 
   color: white; 
 }
 
@@ -623,4 +629,56 @@
     width: 100%; /* 모바일에서는 버튼을 꽉 차게 */
     padding: 14px;
   }
+}
+
+/* signup 추가 클래스 */
+.signup-error {
+  width: 100%;
+  max-width: 550px;
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-base);
+  text-align: center;
+  font-weight: var(--font-weight-medium);
+}
+
+.signup-footer-link {
+  color: var(--color-accent-strong);
+  font-weight: var(--font-weight-bold);
+}
+
+.back-button:hover {
+  background: var(--color-bg-hover);
+  border-color: var(--color-border-strong);
+}
+
+.back-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.complete-button-spacing {
+  margin-top: var(--space-5);
+}
+
+/* 폼 select 토큰 정렬 */
+.signup-form select {
+  width: 100% !important;
+  padding: 12px 16px;
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-family: inherit;
+  background: var(--color-surface);
+  color: var(--color-text);
+  outline: none;
+  cursor: pointer;
+}
+.signup-form select:focus-visible,
+.signup-form input:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(45, 62, 93, 0.18);
 }

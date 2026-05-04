@@ -1,0 +1,112 @@
+.sp-cheer-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 18px 22px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-soft);
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 60%, #fef9ff 100%);
+  background-size: 200% 200%;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
+  overflow: hidden;
+  animation: sp-cheer-shimmer 9s ease-in-out infinite;
+}
+
+.sp-cheer-banner::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--color-accent), var(--color-primary));
+}
+
+/* 모든 mood가 SkillPilot navy/blue 계열 안에서 농도만 변화 */
+.sp-cheer-banner--cheer { background: linear-gradient(135deg, #eef5ff 0%, #ffffff 60%, #f3f6fa 100%); }
+.sp-cheer-banner--tip   { background: linear-gradient(135deg, #f5f8fc 0%, #ffffff 60%, #e9f0f8 100%); }
+.sp-cheer-banner--tip::before  { background: linear-gradient(180deg, var(--color-primary), var(--color-accent-strong)); }
+.sp-cheer-banner--idle  { background: linear-gradient(135deg, #f3f6fa 0%, #ffffff 60%, #eaf0fa 100%); }
+.sp-cheer-banner--idle::before { background: linear-gradient(180deg, #6e8bb3, var(--color-primary)); }
+
+@keyframes sp-cheer-shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+.sp-cheer-banner__icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+  animation: sp-cheer-bob 3.5s ease-in-out infinite;
+}
+
+@keyframes sp-cheer-bob {
+  0%, 100% { transform: translateY(0)    rotate(0deg); }
+  50%      { transform: translateY(-3px) rotate(-4deg); }
+}
+
+.sp-cheer-banner__text {
+  flex: 1;
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  line-height: 1.5;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.sp-cheer-banner__text.is-in {
+  opacity: 1;
+  transform: translateY(0);
+  animation: sp-cheer-fade-in 0.4s ease both;
+}
+.sp-cheer-banner__text.is-out {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+@keyframes sp-cheer-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sp-cheer-banner__dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.sp-cheer-banner__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-border-strong);
+  transition: all var(--transition-base);
+}
+.sp-cheer-banner__dot.is-active {
+  width: 18px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+}
+
+@media (max-width: 480px) {
+  .sp-cheer-banner { padding: 14px 16px; gap: 12px; }
+  .sp-cheer-banner__icon { width: 38px; height: 38px; font-size: 22px; }
+  .sp-cheer-banner__text { font-size: var(--font-size-base); }
+  .sp-cheer-banner__dots { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sp-cheer-banner,
+  .sp-cheer-banner__icon,
+  .sp-cheer-banner__text { animation: none !important; transition: none !important; }
+}

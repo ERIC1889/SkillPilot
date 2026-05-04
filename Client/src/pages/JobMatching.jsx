@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import { Loading, EmptyState, Button } from '../components/ui';
 import '../styles/jobMatching.css';
 
 export default function JobMatching() {
@@ -35,16 +36,24 @@ export default function JobMatching() {
     };
   }, []);
 
-  if (loading) return <div className="jm-loading">분석 중...</div>;
+  if (loading) {
+    return (
+      <main className="jm-page">
+        <Loading variant="block" size="lg" label="채용 매칭을 분석하는 중" />
+      </main>
+    );
+  }
 
   return (
-    <div className="jm-page">
+    <main className="jm-page">
       <header className="jm-header">
-        <button className="jm-back" onClick={() => navigate('/dashboard')}>← 대시보드</button>
-        <h1>채용 매칭 & 스킬갭 분석</h1>
+        <button type="button" className="jm-back" onClick={() => navigate('/dashboard')} aria-label="대시보드로 돌아가기">
+          ← 대시보드
+        </button>
+        <h1>채용 매칭 &amp; 스킬갭 분석</h1>
       </header>
 
-      {error && <p className="jm-error">{error}</p>}
+      {error && <p className="jm-error" role="alert">{error}</p>}
 
       {data?.gap && (
         <section className="jm-gap">
@@ -90,7 +99,14 @@ export default function JobMatching() {
 
       <section className="jm-jobs">
         <h2>매칭된 채용 공고</h2>
-        {data?.jobs?.length === 0 && <p className="jm-empty">매칭되는 공고가 없습니다.</p>}
+        {data?.jobs?.length === 0 && (
+          <EmptyState
+            icon="🧭"
+            title="매칭되는 공고가 없습니다"
+            description="프로필 설정과 자격증 정보를 보완하면 매칭이 더 잘됩니다."
+            action={<Button variant="ghost" onClick={() => navigate('/dashboard')}>대시보드로</Button>}
+          />
+        )}
         <div className="jm-job-list">
           {data?.jobs?.map((job) => (
             <article key={job.id} className="jm-job-card">
@@ -120,6 +136,6 @@ export default function JobMatching() {
           ))}
         </div>
       </section>
-    </div>
+    </main>
   );
 }

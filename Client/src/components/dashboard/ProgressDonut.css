@@ -1,0 +1,35 @@
+.sp-donut {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.sp-donut__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-align: center;
+}
+.sp-donut__value {
+  font-size: 34px;
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-primary-hover);
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+.sp-donut__value span {
+  font-size: 16px;
+  margin-left: 2px;
+  color: var(--color-text-subtle);
+  font-weight: var(--font-weight-bold);
+}
+.sp-donut__label {
+  margin-top: 6px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-subtle);
+  font-weight: var(--font-weight-semibold);
+}

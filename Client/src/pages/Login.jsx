@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { useAuth } from "../contexts/AuthContext";
+import { Button } from "../components/ui";
 import "../styles/login.css";
 
 import logo from "../assets/logo.png";
@@ -15,7 +16,7 @@ function FeatureCard({ title, desc, icon }) {
   return (
     <div className="feature-card">
       <div className="feature-icon">
-        <img src={icon} alt="" className="feature-icon-img" />
+        <img src={icon} alt="" aria-hidden="true" className="feature-icon-img" />
       </div>
       <div className="feature-title">{title}</div>
       <div className="feature-desc">{desc}</div>
@@ -50,13 +51,13 @@ function Login() {
       <div className="bg-left" />
       <div className="bg-right" />
 
-      <div className="login-main-card">
-        <section className="login-left-section">
+      <main className="login-main-card">
+        <section className="login-left-section" aria-labelledby="login-pitch-title">
           <div className="left-inner">
             <div className="logo-circle">
-              <img src={logo} alt="SkillPilot Logo" className="logo-img" />
+              <img src={logo} alt="SkillPilot 로고" className="logo-img" />
             </div>
-            <h1 className="left-title">당신의 잠재력을 깨우세요</h1>
+            <h1 id="login-pitch-title" className="left-title">당신의 잠재력을 깨우세요</h1>
             <p className="left-sub">SkillPilot과 함께라면 어떤 목표든 달성할 수 있습니다</p>
 
             <div className="features-grid">
@@ -72,16 +73,20 @@ function Login() {
             <h2 className="brand-title">SkillPilot</h2>
             <p className="brand-sub">자격증 취득을 향한 여정을 시작하세요</p>
 
-            {error && <div className="error-message" style={{ color: '#dc2626', fontSize: '14px', marginBottom: '12px', textAlign: 'center' }}>{error}</div>}
+            {error && (
+              <div className="error-message" role="alert">{error}</div>
+            )}
 
-            <form className="login-form" onSubmit={handleSubmit}>
+            <form className="login-form" onSubmit={handleSubmit} noValidate>
               <div className="field">
-                <div className="label-row">
-                  <img src={emailIcon} alt="" className="label-img" />
+                <label className="label-row" htmlFor="login-email">
+                  <img src={emailIcon} alt="" aria-hidden="true" className="label-img" />
                   <span className="label-text">이메일</span>
-                </div>
+                </label>
                 <input
+                  id="login-email"
                   type="email"
+                  autoComplete="email"
                   className="input-field"
                   placeholder="이메일을 입력하세요"
                   value={email}
@@ -91,12 +96,14 @@ function Login() {
               </div>
 
               <div className="field">
-                <div className="label-row">
-                  <img src={lockIcon} alt="" className="label-img2" />
+                <label className="label-row" htmlFor="login-password">
+                  <img src={lockIcon} alt="" aria-hidden="true" className="label-img2" />
                   <span className="label-text">비밀번호</span>
-                </div>
+                </label>
                 <input
+                  id="login-password"
                   type="password"
+                  autoComplete="current-password"
                   className="input-field"
                   placeholder="비밀번호를 입력하세요"
                   value={password}
@@ -105,20 +112,20 @@ function Login() {
                 />
               </div>
 
-              <button type="submit" className="login-submit-btn" disabled={loading}>
+              <Button type="submit" fullWidth size="lg" loading={loading}>
                 {loading ? '로그인 중...' : '로그인'}
-              </button>
+              </Button>
             </form>
 
-            <div className="divider">
+            <div className="divider" aria-hidden="true">
               <span className="divider-line" />
               <span className="divider-text">또는</span>
               <span className="divider-line" />
             </div>
 
             <div className="social-row">
-              <button className="social-btn"><FaGoogle /> Google</button>
-              <button className="social-btn"><FaGithub /> GitHub</button>
+              <button type="button" className="social-btn" aria-label="Google 계정으로 로그인"><FaGoogle aria-hidden="true" /> Google</button>
+              <button type="button" className="social-btn" aria-label="GitHub 계정으로 로그인"><FaGithub aria-hidden="true" /> GitHub</button>
             </div>
 
             <div className="signup-link-wrapper">
@@ -126,7 +133,7 @@ function Login() {
             </div>
           </div>
         </section>
-      </div>
+      </main>
     </div>
   );
 }

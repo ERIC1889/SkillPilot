@@ -117,7 +117,7 @@
 .week-number {
   width: 36px;
   height: 36px;
-  background: #bfdbfe;
+  background: var(--color-accent-soft-border);
   color: #1e40af;
   border-radius: 50%;
   display: flex;
