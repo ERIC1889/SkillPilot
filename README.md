@@ -1,5 +1,3 @@
-Resume this session with:                                                             
-claude --resume 171a9e24-f28b-493f-9b88-bb0b96af961a
 # SkillPilot
 
 IT 취업준비생을 위한 올인원 커리어 지원 플랫폼
